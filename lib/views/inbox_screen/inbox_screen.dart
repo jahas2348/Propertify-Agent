@@ -27,7 +27,7 @@ class InboxScreen extends StatelessWidget {
                 ),
                 ListTile(
                   onTap: () {
-                    Navigator.of(context).push(MaterialPageRoute(builder: (context) => ChatSingleScreen(),));
+                    // Navigator.of(context).push(MaterialPageRoute(builder: (context) => ChatSingleScreen(),));
                   },
                   contentPadding: EdgeInsets.all(0),
                   leading: CircleAvatar(),

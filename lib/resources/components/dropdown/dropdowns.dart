@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:propertify_for_agents/resources/colors/app_colors.dart';
 
 class CustomDropdown extends StatelessWidget {
   final List<String> items;
@@ -17,18 +16,25 @@ class CustomDropdown extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return DropdownButtonFormField<String>(
-      value: selectedCategory.value.isEmpty ? null : selectedCategory.value,
-      items: items.map((item) {
-        return DropdownMenuItem<String>(
-          value: item,
-          child: Text(item),
-        );
-      }).toList(),
-      onChanged: onChanged,
-      decoration: InputDecoration(
-        hintText: hintText,
-        isDense: true,
+    return Container(
+      width: double.infinity,
+      child: DropdownButton<String>(
+        value: selectedCategory.value.isEmpty ? null : selectedCategory.value,
+        onChanged: onChanged,
+        items: items.map((item) {
+          return DropdownMenuItem<String>(
+            value: item,
+            child: Text(item),
+          );
+        }).toList(),
+        isExpanded: true,
+        hint: Text(
+          hintText,
+          style: TextStyle(
+            color: Colors.grey, // Change the hint text color here
+          ),
+        ),
+        underline: Container(), // Removes the underline
       ),
     );
   }

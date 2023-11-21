@@ -20,7 +20,6 @@
 //   }
 // }
 
-
 // class SearchScreen extends StatefulWidget {
 //   @override
 //   _SearchScreenState createState() => _SearchScreenState();
@@ -79,126 +78,150 @@
 // }
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:geocoding/geocoding.dart';
 
 class SearchScreen extends StatefulWidget {
+
+  final TextEditingController? propertyLatitude;
+  final TextEditingController? propertyLongitude;
+
+   SearchScreen({super.key,  this.propertyLatitude,  this.propertyLongitude});
+  
+  
   @override
   _SearchScreenState createState() => _SearchScreenState();
 }
 
 class _SearchScreenState extends State<SearchScreen> {
-  LatLng currentLocation = LatLng(11, 11);
+  LatLng currentLocation = LatLng(11.321720411521987, 75.99506049016709);
   TextEditingController _searchController = TextEditingController();
-  List<Placemark> _suggestions = [];
+  Set<Marker> markers = {};
 
-  Future<void> onSearchChanged() async {
-    final query = _searchController.text;
-    if (query.isNotEmpty) {
-      final locations = await locationFromAddress(query);
-      if (locations != null && locations.isNotEmpty) {
-        final placemarks = await placemarkFromCoordinates(
-          locations[0].latitude,
-          locations[0].longitude,
-        );
-        setState(() {
-          _suggestions = placemarks;
-        });
-      } else {
-        setState(() {
-          _suggestions = [];
-        });
-      }
-    } else {
+  @override
+  void initState() {
+    super.initState();
+    getLocation(); // Get current location initially
+  }
+
+  Future<void> getLocation() async {
+    try {
+      Position position = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high,
+      );
       setState(() {
-        _suggestions = [];
+        currentLocation = LatLng(position.latitude, position.longitude);
+        markers.add(Marker(
+          markerId: MarkerId('current_location'),
+          position: currentLocation,
+        ));
       });
+    } catch (e) {
+      print("Error getting location: $e");
     }
   }
 
-  void selectLocation(Placemark placemark) {
-    final locationName = placemark.name;
-    locationFromAddress(locationName!).then((locations) {
-      if (locations != null && locations.isNotEmpty) {
-        final latitude = locations[0].latitude;
-        final longitude = locations[0].longitude;
+  void _handleMapTap(LatLng tappedPoint) {
+
+    print("Tapped Point Coordinates: ${tappedPoint.latitude}, ${tappedPoint.longitude}");
+    widget.propertyLatitude?.text = tappedPoint.latitude.toString();
+    widget.propertyLongitude?.text = tappedPoint.longitude.toString();
+    setState(() {
+      currentLocation = tappedPoint;
+      markers.clear();
+      markers.add(Marker(
+        markerId: MarkerId('current_location'),
+        position: tappedPoint,
+      ));
+    });
+  }
+
+  Future<void> _searchAndMoveToLocation(String query) async {
+    try {
+      List<Location> locations = await locationFromAddress(query);
+      if (locations.isNotEmpty) {
+        Location location = locations.first;
+        LatLng searchedLocation = LatLng(location.latitude, location.longitude);
+
+        print("Searched Location Coordinates: ${searchedLocation.latitude}, ${searchedLocation.longitude}");
 
         setState(() {
-          currentLocation = LatLng(latitude, longitude);
-          _searchController.clear();
-          _suggestions.clear();
+          currentLocation = searchedLocation;
+          markers.clear();
+          markers.add(Marker(
+            markerId: MarkerId('current_location'),
+            position: searchedLocation,
+          ));
         });
+      } else {
+        print("No location found for the given query");
       }
-    });
+    } catch (e) {
+      print("Error searching location: $e");
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Search Screen'),
-      ),
-      body: FutureBuilder(
-        future: Future.value(currentLocation),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.done) {
-            final LatLng? location = snapshot.data;
-            return Stack(
-              children: [
-                GoogleMap(
-                  initialCameraPosition: CameraPosition(target: location!, zoom: 16.0),
-                  markers: {
-                    Marker(
-                      markerId: MarkerId('current_location'),
-                      position: location,
-                    ),
-                  },
-                ),
-                Positioned(
-                  top: 0,
-                  left: 0,
-                  right: 0,
+    return SafeArea(
+      
+      child: Scaffold(
+        floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+        floatingActionButton: Padding(
+          padding: const EdgeInsets.all(20.0),
+          child: FloatingActionButton(
+            
+          child: Icon(Icons.check),
+          onPressed: () {
+          Navigator.of(context).pop();
+          
+              },),
+        ),
+        body: Stack(
+          children: [
+            GoogleMap(
+              initialCameraPosition: CameraPosition(
+                target: currentLocation,
+                zoom: 10.0,
+              ),
+              markers: markers,
+              onTap: _handleMapTap,
+            ),
+            Positioned(
+              top: 0,
+              left: 0,
+              right: 0,
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Container(
+                  color: Colors.white,
                   child: Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: TextField(
-                      controller: _searchController,
-                      onChanged: (text) => onSearchChanged(),
-                      decoration: InputDecoration(
-                        hintText: 'Enter Address',
-                        suffixIcon: IconButton(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: TextField(
+                            controller: _searchController,
+                            onChanged: (text) {},
+                            decoration: InputDecoration(
+                              hintText: 'Enter Address',
+                            ),
+                          ),
+                        ),
+                        IconButton(
                           icon: Icon(Icons.search),
                           onPressed: () {
-                            // Handle search and show suggestions here
+                            _searchAndMoveToLocation(_searchController.text);
                           },
                         ),
-                      ),
+                      ],
                     ),
                   ),
                 ),
-                Positioned(
-                  top: 80,
-                  left: 0,
-                  right: 0,
-                  bottom: 0,
-                  child: ListView.builder(
-                    itemCount: _suggestions.length,
-                    itemBuilder: (context, index) {
-                      final suggestion = _suggestions[index];
-                      return ListTile(
-                        title: Text(suggestion.name ?? ''),
-                        subtitle: Text(suggestion.street ?? ''),
-                        onTap: () {
-                          selectLocation(suggestion);
-                        },
-                      );
-                    },
-                  ),
-                ),
-              ],
-            );
-          } else {
-            return Center(child: CircularProgressIndicator());
-          }
-        },
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

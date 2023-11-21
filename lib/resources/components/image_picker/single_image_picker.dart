@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:image_cropper/image_cropper.dart';
+import 'package:propertify_for_agents/resources/constants/spaces%20&%20paddings/spaces.dart';
 
 class SingleImagePickerWidget extends StatefulWidget {
   final void Function(File?) onImageSelected;
@@ -38,6 +39,7 @@ class _SingleImagePickerWidgetState extends State<SingleImagePickerWidget> {
         return Column(
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
+            customSpaces.verticalspace20,
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
@@ -46,9 +48,10 @@ class _SingleImagePickerWidgetState extends State<SingleImagePickerWidget> {
                     await _getImage(ImageSource.gallery);
                     Navigator.of(context).pop();
                   },
-                  child: Column(
+                  child: Row(
                     children: [
                       Icon(Icons.photo_library),
+                       customSpaces.horizontalspace10,
                       Text('Gallery'),
                     ],
                   ),
@@ -58,15 +61,17 @@ class _SingleImagePickerWidgetState extends State<SingleImagePickerWidget> {
                     await _getImage(ImageSource.camera);
                     Navigator.of(context).pop();
                   },
-                  child: Column(
+                  child: Row(
                     children: [
                       Icon(Icons.camera_alt),
+                      customSpaces.horizontalspace10,
                       Text('Camera'),
                     ],
                   ),
                 ),
               ],
             ),
+             customSpaces.verticalspace20,
           ],
         );
       },

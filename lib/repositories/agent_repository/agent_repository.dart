@@ -9,4 +9,17 @@ class AgentRepository {
     dynamic response = await _apiService.postApi(data, AppUrl.getAllProperties);
     return response;
   }
+
+  Future<Map<String,dynamic>> getAgentRequests (var agentId) async {
+    print('ccc');
+    dynamic response = await _apiService.getApi('${AppUrl.getAllRequestsofAgent}/$agentId');
+    return response;
+  }
+
+  Future<Map<String,dynamic>> sendPaymentRequest (var data) async {
+   
+    dynamic response = await _apiService.postApi(data,AppUrl.sendPaymentRequesttoUser);
+    return response;
+  }
+
 }

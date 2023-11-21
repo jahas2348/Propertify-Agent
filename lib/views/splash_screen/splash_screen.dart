@@ -5,6 +5,7 @@ import 'package:propertify_for_agents/models/agent_model.dart';
 import 'package:propertify_for_agents/resources/colors/app_colors.dart';
 import 'package:propertify_for_agents/services/api_services.dart';
 import 'package:propertify_for_agents/view_models/controllers/agent_view_model.dart';
+import 'package:propertify_for_agents/view_models/controllers/notification_view_model.dart';
 import 'package:propertify_for_agents/views/navigation/navigation.dart';
 import 'package:propertify_for_agents/views/welcome_screen/welcome_screen.dart';
 
@@ -55,9 +56,12 @@ class _SplashScreenState extends State<SplashScreen> {
           final agent = AgentModel.fromJson(agentData['agent']);
           print(agent);
           await Get.find<AgentViewModel>().setAgent(agent);
-
+            
           await Get.find<AgentViewModel>().getAgentProperties();
-
+          
+          await Get.find<NotificationViewModel>().getAgentRequests();
+          print('after request');
+          AgentViewModel().update();
           Get.off(NavigationItems());
           //  Navigator.of(context).push(MaterialPageRoute(builder: (context) => NavigationItems(),));
         }

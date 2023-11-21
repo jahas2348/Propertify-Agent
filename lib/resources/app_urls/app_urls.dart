@@ -1,6 +1,6 @@
 class AppUrl {
   //Base
-  static const String baseUrl = 'http://10.4.6.104:3000';
+  static const String baseUrl = 'http://10.4.4.133:3000';
   //Login
   static const String loginApi = '';
   //Agent Existence
@@ -8,11 +8,15 @@ class AppUrl {
   //Get Agent
   static const String getAgent = '$baseUrl/api/agent/getAgent';
   //Add Property Data
-  static const String addPropertyData = '$baseUrl/api/agent/addPropertyData';
+  static const String addPropertyData = '$baseUrl/api/admin/addPropertyData';
   //Update Property Data
-  static const String updatePropertyData = '$baseUrl/api/agent/updateProperty';
+  static const String updatePropertyData = '$baseUrl/api/admin/updateProperty';
   //Get All Properties
   static const String getAllProperties = '$baseUrl/api/agent/getAllProperties';
+  //Get All Requests
+  static const String getAllRequestsofAgent = '$baseUrl/api/agent/getAllRequestsofAgent';
+  //Send Payment Request to User
+  static const String sendPaymentRequesttoUser = '$baseUrl/api/agent/PaymentRequesttoUser';
   
   
 }

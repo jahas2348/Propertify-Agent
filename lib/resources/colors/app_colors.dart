@@ -25,5 +25,6 @@ class AppColors {
   // static const Color accentColor = Color(0xFF9C27B0);
   // static const Color textColor = Color(0xFF333333);
   static const Color blackColor = Color(0xff000000);
+  static const Color whiteColor = Color(0xffFFFFFF);
 }
 

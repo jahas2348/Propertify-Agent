@@ -192,6 +192,7 @@ class CustomInputField extends StatelessWidget {
   final TextEditingController? controller;
   final TextInputType? keyboardType;
   final String? Function(String?)? validator;
+  final bool? editable;
 
   CustomInputField({
     Key? key,
@@ -201,6 +202,7 @@ class CustomInputField extends StatelessWidget {
     this.controller,
     this.keyboardType,
     this.validator,
+    this.editable,
   });
 
   @override
@@ -212,42 +214,43 @@ class CustomInputField extends StatelessWidget {
       validator: validator,
       keyboardType: keyboardType,
       maxLines: maxLines,
+      readOnly: !(editable ?? true), // Updated this line
       style: TextStyle(
         fontSize: 16,
         fontWeight: FontWeight.w600,
-        color: AppColors.secondaryColor,
+        color: Colors.grey.shade600,
       ),
       decoration: InputDecoration(
         prefixIcon: Icon(
           fieldIcon ?? null,
           color: Colors.grey.shade500,
-          size: 24,
+          size: 20,
         ),
         hintText: hintText,
         hintStyle: TextStyle(
           color: Colors.grey.shade400,
-          fontSize: 16,
-          fontWeight: FontWeight.w500,
+          fontSize: 14,
+          fontWeight: FontWeight.w600,
         ),
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(8),
+          borderRadius: BorderRadius.circular(4),
         ),
         focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(8),
+          borderRadius: BorderRadius.circular(4),
           borderSide: BorderSide(
             color: Colors.black,
             width: 1,
           ),
         ),
         focusedErrorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(8),
+          borderRadius: BorderRadius.circular(4),
           borderSide: BorderSide(
             color: Colors.red,
             width: 1,
           ),
         ),
         errorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(8),
+          borderRadius: BorderRadius.circular(4),
           borderSide: BorderSide(
             color: Colors.red,
             width: 1,
@@ -257,6 +260,7 @@ class CustomInputField extends StatelessWidget {
     );
   }
 }
+
 
 class CustomInputField1 extends StatefulWidget {
   final String hintText;

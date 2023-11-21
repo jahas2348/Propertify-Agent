@@ -65,12 +65,28 @@ class AppFonts {
     fontWeight: FontWeight.w700,
     color: AppColors.secondaryColor,
   );
+  static const TextStyle SecondaryColorText24 = TextStyle(
+    fontSize: 24,
+    fontWeight: FontWeight.w700,
+    color: AppColors.secondaryColor,
+  );
   static const TextStyle SecondaryColorText28 = TextStyle(
     fontSize: 28,
     fontWeight: FontWeight.w800,
     color: AppColors.secondaryColor,
   );
   //Grey Color
+  
+ static const TextStyle greyText10 = TextStyle(
+    fontSize: 10,
+    fontWeight: FontWeight.w500,
+    color: Colors.grey,
+  );
+  static const TextStyle greyText12 = TextStyle(
+    fontSize: 12,
+    fontWeight: FontWeight.w600,
+    color: Colors.grey,
+  );
   static const TextStyle greyText14 = TextStyle(
     fontSize: 14,
     fontWeight: FontWeight.w600,
@@ -89,5 +105,16 @@ class AppFonts {
     fontSize: 20,
     fontWeight: FontWeight.w700,
     color: Colors.red,
+  );
+  //white Color
+  static const TextStyle WhiteColorText14 = TextStyle(
+    fontSize: 14,
+    fontWeight: FontWeight.w600,
+    color: AppColors.whiteColor,
+  );
+  static const TextStyle WhiteColorText14Bold = TextStyle(
+    fontSize: 14,
+    fontWeight: FontWeight.w700,
+    color: AppColors.whiteColor,
   );
 }

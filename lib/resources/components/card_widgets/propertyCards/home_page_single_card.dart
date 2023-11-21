@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:propertify_for_agents/models/agent_model.dart';
 import 'package:propertify_for_agents/models/property_model.dart';
+import 'package:propertify_for_agents/resources/assets/propertify_icons.dart';
 import 'package:propertify_for_agents/resources/colors/app_colors.dart';
 import 'package:propertify_for_agents/resources/fonts/app_fonts/app_fonts.dart';
 import 'package:propertify_for_agents/services/api_endpoinds.dart';
@@ -12,20 +13,21 @@ import 'package:propertify_for_agents/views/properties_details_screen/property_d
 // ignore: must_be_immutable
 class homePageCardSingle extends StatelessWidget {
   double? cardwidth;
-  Rx<PropertyModel> property;
-  Rx<AgentModel> agent;
+  double? cardHeight;
+  final Rx<PropertyModel> property;
+  Rx<AgentModel>? agent;
   
    homePageCardSingle({
     super.key,
     this.cardwidth,
+    this.cardHeight,
     required this.property,
-    required this.agent,
+    this.agent,
 
   });
 
   @override
   Widget build(BuildContext context) {
-    print(property.value.propertyGalleryPictures);
     return GestureDetector(
       onTap: () {
         Get.to(() => PropertyDetailsScreen(property: property));
@@ -34,9 +36,12 @@ class homePageCardSingle extends StatelessWidget {
       child: Container(
         // width: MediaQuery.of(context).size.width * 0.5,
         width:cardwidth,
-        padding: EdgeInsets.all(10),
+        
+
+        padding: EdgeInsets.all(0),
         decoration: BoxDecoration(
-          border: Border.all(color: Colors.grey.shade300),
+          color: Colors.white,
+          // border: Border.all(color: Colors.grey.shade300),
           borderRadius: BorderRadius.circular(8),
         ),
         child: Column(
@@ -46,76 +51,85 @@ class homePageCardSingle extends StatelessWidget {
                 ClipRRect(
                   borderRadius: BorderRadius.circular(8),
                   child: Image(
-                    height: 140,
+                    height: cardHeight ?? 110,
                     width: double.infinity,
                     fit: BoxFit.cover, 
                   //   fit: BoxFit.cover,    
-                    image: NetworkImage('${ApiEndPoints.baseurl}${property.value.propertyCoverPicture!.path}'),
+                    image: NetworkImage('${property.value.propertyCoverPicture!.path}'),
                     // image: AssetImage(
                     //   'assets/images/propertify1.jpg',
                     // ),
                   ),
                 ),
-                Positioned(
-                 top: 10,
-                  right: 10,
-                    child: Container(
-                  decoration: BoxDecoration(
-                      color: AppColors.yellowColor,
-                      borderRadius: BorderRadius.circular(4)),
-                  padding: customPaddings.fullpadding4,
-                  child: Text('SALE',
-                      style: AppFonts.SecondaryColorText10),
-                ))
+               Positioned(
+                  top: 0,
+                  right: 0,
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: AppColors.secondaryColor,
+                      borderRadius: BorderRadius.circular(4),
+                    ),
+                    padding: customPaddings.fullpadding6,
+                    child: Text(
+                      '₹ ${property.value.propertyPrice}',
+                      style: AppFonts.WhiteColorText14,
+                    ),
+                  ),
+                ),
               ],
             ),
             customSpaces.verticalspace10,
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                //Property Category
-                Text(
-                  property.value.propertyCategory,
-                  style: AppFonts.PrimaryColorText14,
-                ),
-                Icon(
-                  Icons.bookmark_border_outlined,
-                  size: 24,
-                )
-              ],
-            ),
-            //Property Name
-            Align(
-              alignment: Alignment.centerLeft,
-              child: Text(
-                property.value.propertyName,
-                style: AppFonts.SecondaryColorText16,
+
+
+
+              Padding(
+              padding: const EdgeInsets.symmetric(vertical: 5),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      customSpaces.horizontalspace20,
+                      Text(
+                        property.value.propertyName,
+                        style: AppFonts.SecondaryColorText14,
+                      ),
+                    ],
+                  ),
+                  customSpaces.verticalspace5,
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      customSpaces.horizontalspace20,
+                      Text(
+                        property.value.propertyCategory,
+                        style: TextStyle(
+                            color: AppColors.primaryColor,
+                            fontSize: 10,
+                            fontWeight: FontWeight.w600),
+                      ),
+                      customSpaces.horizontalspace5,
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Icon(
+                            PropertifyIcons.location,
+                            color: Colors.grey,
+                            size: 12,
+                          ),
+                          customSpaces.horizontalspace5,
+                          Text(
+                            property.value.propertyCity,
+                            style: AppFonts.greyText12,
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ],
               ),
-            ),
-            customSpaces.verticalspace5,
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    Icon(
-                      Icons.location_on_outlined,
-                      color: Colors.grey,
-                      size: 14,
-                    ),
-                    customSpaces.horizontalspace5,
-                    Text(
-                      property.value.propertyCity,
-                      style: AppFonts.greyText14,
-                    ),
-                  ],
-                ),
-                Text(
-                  '₹${property.value.propertyPrice}',
-                  style: AppFonts.SecondaryColorText16,
-                ),
-              ],
             ),
           ],
         ),
@@ -160,3 +174,6 @@ class borderBoxIconandText extends StatelessWidget {
     );
   }
 }
+
+
+

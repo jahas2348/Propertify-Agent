@@ -6,14 +6,16 @@ import 'package:propertify_for_agents/resources/fonts/app_fonts/app_fonts.dart';
 import 'package:propertify_for_agents/resources/constants/spaces%20&%20paddings/spaces.dart';
 
 class MultiImagePickerWidget extends StatefulWidget {
-  final void Function(List<XFile>?) onImagesSelected;
+  final void Function(List<XFile>?, List<int>) onImagesSelected; // Pass removeIndexes
   final List<String>? initialImageUrls; // URLs for updating
-  final List<File>? initialImages;
+  final List<XFile>? initialImages;
+  final List<int> initialRemoveIndexes; // Add initialRemoveIndexes
 
   MultiImagePickerWidget({
     required this.onImagesSelected,
     this.initialImageUrls,
     this.initialImages,
+    this.initialRemoveIndexes = const [], required property, // Provide an empty list by default
   });
 
   @override
@@ -23,7 +25,9 @@ class MultiImagePickerWidget extends StatefulWidget {
 class _MultiImagePickerWidgetState extends State<MultiImagePickerWidget> {
   List<XFile>? selectedImages = [];
   int selectedCount = 0;
+  List<int> removeIndexes = []; // Track removeIndexes
   bool isUpdateMode = false;
+
   @override
   void initState() {
     super.initState();
@@ -46,6 +50,9 @@ class _MultiImagePickerWidgetState extends State<MultiImagePickerWidget> {
         selectedCount++;
       }
     }
+
+    // Add initial removeIndexes
+    removeIndexes = List.from(widget.initialRemoveIndexes);
   }
 
   Future<void> loadImages() async {
@@ -72,7 +79,8 @@ class _MultiImagePickerWidgetState extends State<MultiImagePickerWidget> {
           }
         });
 
-        widget.onImagesSelected(selectedImages);
+        // Pass selectedImages and removeIndexes to the callback
+        widget.onImagesSelected(selectedImages, removeIndexes);
       }
     } catch (e) {
       print('Error selecting images: $e');
@@ -180,6 +188,10 @@ class _MultiImagePickerWidgetState extends State<MultiImagePickerWidget> {
                                 setState(() {
                                   displayedImages.removeAt(index);
                                   selectedImages!.removeAt(index);
+
+                                  // Remove the corresponding index from removeIndexes
+                                  removeIndexes.removeAt(index);
+
                                   selectedCount--;
                                 });
                               },

@@ -3,37 +3,33 @@ class AgentModel {
   String? name;
   String? email;
   String? phone;
-  bool? isBanned;
+  bool? status;
   String? image;
-  String? token;
 
   AgentModel({
     required this.id,
     this.name,
     this.email,
     this.phone,
-    this.isBanned,
+    this.status,
     this.image,
-    this.token,
   });
 
   factory AgentModel.fromJson(Map<String, dynamic> json) => AgentModel(
         id: json['_id'],
-        name: json['name'],
+        name: json['fullname'],
         email: json['email'],
-        phone: json['phone'],
+        phone: json['mobNo'],
         image: json['image'],
-        token: json['token'],
-        isBanned: json['isBanned'] ?? false,
+        status: json['status'] ?? false,
       );
 
-  static Map<String, dynamic> toJson(AgentModel agent) => {
+  Map<String, dynamic> toJson(AgentModel agent) => {
         '_id': agent.id,
-        'name': agent.name,
+        'fullname': agent.name,
         'email': agent.email,
-        'phone': agent.phone,
+        'mobNo': agent.phone,
         'image': agent.image,
-        'token': agent.token,
-        'isBanned': agent.isBanned,
+        'status': agent.status,
       };
 }
