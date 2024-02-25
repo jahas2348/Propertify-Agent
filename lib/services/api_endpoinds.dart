@@ -1,6 +1,6 @@
 class ApiEndPoints {
   //Base Url
-  static const String baseurl = 'http://10.4.4.133:3000';
+  static const String baseurl = 'http://192.168.64.11:3000';
   //Check Agent
   static const String checkAgent = '/api/agent/checkAgentPhoneNumber';
   //Get Agent

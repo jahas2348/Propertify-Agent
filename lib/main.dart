@@ -26,16 +26,14 @@ class propertify_for_agents extends StatelessWidget {
 
     SystemChrome.setSystemUIOverlayStyle(
       SystemUiOverlayStyle(
-        statusBarColor: systemBrightness == Brightness.light
-            ? Colors.white
-            : Colors.black,
+        statusBarColor:
+            systemBrightness == Brightness.light ? Colors.white : Colors.black,
         statusBarIconBrightness: systemBrightness == Brightness.light
             ? Brightness.dark
             : Brightness.light,
         statusBarBrightness: systemBrightness,
-        systemNavigationBarColor: systemBrightness == Brightness.light
-            ? Colors.white
-            : Colors.black,
+        systemNavigationBarColor:
+            systemBrightness == Brightness.light ? Colors.white : Colors.black,
         systemNavigationBarIconBrightness: systemBrightness == Brightness.light
             ? Brightness.dark
             : Brightness.light,
@@ -49,6 +47,7 @@ class propertify_for_agents extends StatelessWidget {
       locale: Locale('en', 'US'),
       fallbackLocale: Locale('en', 'US'),
       theme: ThemeData(
+        useMaterial3: false,
         progressIndicatorTheme: ProgressIndicatorThemeData(
             color: AppColors.primaryColor.shade100,
             circularTrackColor: AppColors.primaryColor),

@@ -1,6 +1,6 @@
 class AppUrl {
   //Base
-  static const String baseUrl = 'http://10.4.4.133:3000';
+  static const String baseUrl = 'http://192.168.64.11:3000';
   //Login
   static const String loginApi = '';
   //Agent Existence
