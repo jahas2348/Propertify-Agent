@@ -24,13 +24,10 @@ class LoginViewModel extends GetxController {
 
   //Verify Phone Number if it exist in Server or Not
   void verifyPhoneNumber() async {
-    print("in function");
     try {
       final phoneNumber = phoneNumberController.value.text;
       final formattedPhoneNumber = '+91' + Utils.formatPhoneNumber(phoneNumber);
-
       Map data = {"mobNo": formattedPhoneNumber.toString()};
-
       await _api.checkAgentExistence(data).then((value) {
         Utils.snackBar('Agent Checking', 'Agent Exists Successful');
         if (value['exists']) {
@@ -49,7 +46,6 @@ class LoginViewModel extends GetxController {
 
   //Firebase Otp Generation
   sendOtp(String formattedPhoneNumber) async {
-    print("In Otp Function");
     await _auth.verifyPhoneNumber(
         phoneNumber: formattedPhoneNumber,
         timeout: Duration(seconds: 60),
@@ -73,6 +69,7 @@ class LoginViewModel extends GetxController {
           verificationId = verificationIdNew;
         });
   }
+
   //Sign in using OTP
   void signInWithOTP(String verificationId) async {
     try {
@@ -104,15 +101,17 @@ class LoginViewModel extends GetxController {
           .setString(SharedPref.agentName, agentName);
 
       print("User signed in: ${userCredential.user?.phoneNumber}");
-       
+
       final agent = AgentModel.fromJson(agentData['agent']);
 
       await Get.find<AgentViewModel>().setAgent(agent);
 
       await Get.find<AgentViewModel>().getAgentProperties();
 
-      Get.off(NavigationItems());
-
+      Get.offUntil(
+        GetPageRoute(page: () => NavigationItems()),
+        (route) => false,
+      );
     } catch (e) {
       print("Error: $e");
     }

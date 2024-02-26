@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:propertify_for_agents/models/property_model.dart';
+import 'package:propertify_for_agents/resources/app_urls/app_urls.dart';
 import 'package:propertify_for_agents/resources/assets/propertify_icons.dart';
 import 'package:propertify_for_agents/resources/colors/app_colors.dart';
 import 'package:propertify_for_agents/resources/components/buttons/custombuttons.dart';
@@ -14,7 +15,6 @@ import 'package:propertify_for_agents/resources/components/image_picker/single_i
 import 'package:propertify_for_agents/resources/components/input_fileds/custom_Input_Fields.dart';
 import 'package:propertify_for_agents/resources/components/input_fileds/custom_Multi_Line_Input_Field.dart';
 import 'package:propertify_for_agents/resources/fonts/app_fonts/app_fonts.dart';
-import 'package:propertify_for_agents/services/api_endpoinds.dart';
 import 'package:propertify_for_agents/services/api_services.dart';
 import 'package:propertify_for_agents/view_models/controllers/agent_view_model.dart';
 import 'package:propertify_for_agents/resources/constants/spaces%20&%20paddings/paddings.dart';
@@ -51,11 +51,10 @@ class _AddPropertyScreenState extends State<AddPropertyScreen> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                
                 CustomInputField(
                   fieldIcon: Icons.tag,
                   controller: tagController,
-                 hintText: 'Please enter tag',
+                  hintText: 'Please enter tag',
                 ),
                 customSpaces.verticalspace10,
                 Row(
@@ -77,7 +76,6 @@ class _AddPropertyScreenState extends State<AddPropertyScreen> {
                           }
                           Navigator.of(context).pop();
                         },
-                       
                       ),
                     ),
                   ],
@@ -100,7 +98,6 @@ class _AddPropertyScreenState extends State<AddPropertyScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      
       body: SafeArea(
         child: Column(
           children: [
@@ -174,7 +171,6 @@ class _AddPropertyScreenState extends State<AddPropertyScreen> {
                                 borderRadius: BorderRadius.circular(4),
                                 color: Colors.grey.shade200,
                               ),
-                              
                               child: Padding(
                                 padding: const EdgeInsets.all(8.0),
                                 child: CustomDropdown(
@@ -192,18 +188,28 @@ class _AddPropertyScreenState extends State<AddPropertyScreen> {
                               ),
                             ),
                             customSpaces.verticalspace20,
-                            CustomColorButton(buttonText: 'Choose Location',
-                            buttonColor: Colors.grey.shade600,
-                            buttonFunction: () {
-                             Navigator.of(context).push(MaterialPageRoute(builder: (context) => SearchScreen(propertyLatitude: propertyController.propertyLatitude,propertyLongitude: propertyController.propertyLongitude),));
-                            },),
+                            CustomColorButton(
+                              buttonText: 'Choose Location',
+                              buttonColor: Colors.grey.shade600,
+                              buttonFunction: () {
+                                Navigator.of(context).push(MaterialPageRoute(
+                                  builder: (context) => SearchScreen(
+                                    propertyLatitude:
+                                        propertyController.propertyLatitude,
+                                    propertyLongitude:
+                                        propertyController.propertyLongitude,
+                                    isPop: true,
+                                  ),
+                                ));
+                              },
+                            ),
                             customSpaces.verticalspace20,
                             CustomInputField(
                               editable: false,
-                               fieldIcon: Icons.pin_drop,
+                              fieldIcon: Icons.pin_drop,
 
                               hintText: 'Latitude',
-                               controller: propertyController.propertyLatitude,
+                              controller: propertyController.propertyLatitude,
                               keyboardType: TextInputType.number,
                               // validator: (value) {
                               //   return propertyController
@@ -227,7 +233,6 @@ class _AddPropertyScreenState extends State<AddPropertyScreen> {
 
                             Row(
                               children: [
-                                
                                 Expanded(
                                   child: CustomInputField(
                                     fieldIcon: PropertifyIcons.bed,
@@ -335,40 +340,48 @@ class _AddPropertyScreenState extends State<AddPropertyScreen> {
                             ),
                             customSpaces.verticalspace20,
 
-                           MultiImagePickerWidget(
-  onImagesSelected: (images, removeIndexes) {
-    setState(() {
-      if (widget.property != null) {
-        // Update propertyGalleryPictures when images are selected
-        propertyController.propertyGalleryPictures = images;
+                            MultiImagePickerWidget(
+                              onImagesSelected: (images, removeIndexes) {
+                                setState(() {
+                                  if (widget.property != null) {
+                                    // Update propertyGalleryPictures when images are selected
+                                    propertyController.propertyGalleryPictures =
+                                        images;
 
-        // Handle image deletions here
-        final selectedImageUrls = images!
-            .map((image) => image.path)
-            .toList();
-        final existingImageUrls = widget.property!.value?.propertyGalleryPictures
-            ?.map((image) => '${image.path}')
-            .toList() ??
-            [];
+                                    // Handle image deletions here
+                                    final selectedImageUrls = images!
+                                        .map((image) => image.path)
+                                        .toList();
+                                    final existingImageUrls = widget.property!
+                                            .value?.propertyGalleryPictures
+                                            ?.map((image) => '${image.path}')
+                                            .toList() ??
+                                        [];
 
-        // Calculate which images were deleted
-        final deletedImageUrls = existingImageUrls
-            .where((imageUrl) => !selectedImageUrls.contains(imageUrl))
-            .map((imageUrl) => imageUrl.replaceAll(ApiEndPoints.baseurl, ''))
-            .toList();
+                                    // Calculate which images were deleted
+                                    final deletedImageUrls = existingImageUrls
+                                        .where((imageUrl) => !selectedImageUrls
+                                            .contains(imageUrl))
+                                        .map((imageUrl) => imageUrl.replaceAll(
+                                            AppUrl.baseUrl, ''))
+                                        .toList();
 
-        print('Deleted Image URLs: $deletedImageUrls');
-      }
-    });
-  },
-  initialImageUrls: widget.property?.value?.propertyGalleryPictures != null
-      ? widget.property!.value!.propertyGalleryPictures!
-          .map((image) => '${image.path}')
-          .toList()
-      : [],
-  property: widget.property, // Pass the property here
-),
-
+                                    print(
+                                        'Deleted Image URLs: $deletedImageUrls');
+                                  }
+                                });
+                              },
+                              initialImageUrls: widget.property?.value
+                                          ?.propertyGalleryPictures !=
+                                      null
+                                  ? widget
+                                      .property!.value!.propertyGalleryPictures!
+                                      .map((image) => '${image.path}')
+                                      .toList()
+                                  : [],
+                              property:
+                                  widget.property, // Pass the property here
+                            ),
 
                             customSpaces.verticalspace20,
                             Text(
@@ -460,13 +473,15 @@ class _AddPropertyScreenState extends State<AddPropertyScreen> {
                             ),
 
                             customSpaces.verticalspace20,
-                            CustomColorButton(buttonText: 'Add Tags',
-                            buttonColor: AppColors.secondaryColor,
-                            buttonFunction: () {
-                               selectedTagIndex = -1;
+                            CustomColorButton(
+                              buttonText: 'Add Tags',
+                              buttonColor: AppColors.secondaryColor,
+                              buttonFunction: () {
+                                selectedTagIndex = -1;
                                 _showTagBottomSheet('');
-                            },),
-                           
+                              },
+                            ),
+
                             customSpaces.verticalspace10,
                             Wrap(
                               spacing: 10,
@@ -507,7 +522,8 @@ class _AddPropertyScreenState extends State<AddPropertyScreen> {
                                               child: Container(
                                                 padding: EdgeInsets.all(5),
                                                 child: CircleAvatar(
-                                                  backgroundColor: Colors.red.shade100,
+                                                  backgroundColor:
+                                                      Colors.red.shade100,
                                                   radius: 15,
                                                   child: Icon(
                                                     Icons.close_rounded,
@@ -563,7 +579,8 @@ class _AddPropertyScreenState extends State<AddPropertyScreen> {
                             final propertyId = widget.property!.value.id;
 
                             if (propertyId != null) {
-                              await propertyController.UpdatePropertyData(widget.property!);
+                              await propertyController.UpdatePropertyData(
+                                  widget.property!);
                               print('Updating success');
                             } else {
                               print('Unable to update property - ID is null.');

@@ -7,27 +7,23 @@ import 'package:propertify_for_agents/resources/constants/spaces%20&%20paddings/
 class PrimaryButton extends StatelessWidget {
   String buttonText;
   VoidCallback? buttonFunction;
- 
+  Color? buttonColor;
+
   PrimaryButton({
     super.key,
     required this.buttonText,
     this.buttonFunction,
-    
+    this.buttonColor,
   });
 
   @override
   Widget build(BuildContext context) {
     return Container(
       height: 54,
-      
-      decoration: BoxDecoration(
-     
-        borderRadius: BorderRadius.circular(20)),
-      
+      decoration: BoxDecoration(borderRadius: BorderRadius.circular(20)),
       child: ClipRRect(
         borderRadius: BorderRadius.all(Radius.circular(8)),
         child: ElevatedButton(
-          
           onPressed: buttonFunction,
           child: Text(
             buttonText,
@@ -37,15 +33,15 @@ class PrimaryButton extends StatelessWidget {
             ),
           ),
           style: ButtonStyle(
-          
-            elevation: MaterialStatePropertyAll(0),
-            backgroundColor: MaterialStatePropertyAll(AppColors.primaryColor)
-          ),
+              elevation: MaterialStatePropertyAll(0),
+              backgroundColor: MaterialStatePropertyAll(
+                  buttonColor == null ? AppColors.primaryColor : buttonColor)),
         ),
       ),
     );
   }
 }
+
 // ignore: must_be_immutable
 class CustomColorButton extends StatelessWidget {
   String buttonText;
@@ -81,9 +77,8 @@ class CustomColorButton extends StatelessWidget {
             ],
           ),
           style: ButtonStyle(
-            elevation: MaterialStatePropertyAll(0),
-             backgroundColor: MaterialStatePropertyAll(buttonColor)
-          ),
+              elevation: MaterialStatePropertyAll(0),
+              backgroundColor: MaterialStatePropertyAll(buttonColor)),
         ),
       ),
     );

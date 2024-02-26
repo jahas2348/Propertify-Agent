@@ -5,7 +5,6 @@ import 'package:propertify_for_agents/resources/constants/spaces%20&%20paddings/
 import 'package:propertify_for_agents/resources/fonts/app_fonts/app_fonts.dart';
 import 'package:propertify_for_agents/views/settings_screen/settings_screen.dart';
 
-
 class ProfileScreen extends StatelessWidget {
   ProfileScreen({super.key});
 
@@ -18,7 +17,6 @@ class ProfileScreen extends StatelessWidget {
           Padding(
             padding: customPaddings.horizontalpadding20,
             child: Column(
-
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 customSpaces.verticalspace20,
@@ -29,22 +27,32 @@ class ProfileScreen extends StatelessWidget {
               ],
             ),
           ),
-          customSpaces.verticalspace20,
+          customSpaces.verticalspace10,
+          Divider(),
+          customSpaces.verticalspace10,
           Padding(
             padding: customPaddings.horizontalpadding20,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                CircleAvatar(radius: 50),
-                customSpaces.verticalspace20,
-              Text('David James', style: AppFonts.SecondaryColorText20,),
+            child:
+                Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              CircleAvatar(radius: 50),
+              customSpaces.verticalspace20,
+              Text(
+                'David James',
+                style: AppFonts.SecondaryColorText20,
+              ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                Text('davidjames@gmail.com', style: AppFonts.greyText14,),
-                Text('Edit Profile',style: AppFonts.PrimaryColorText14,),
-          
-              ],)
+                  Text(
+                    'davidjames@gmail.com',
+                    style: AppFonts.greyText14,
+                  ),
+                  Text(
+                    'Edit Profile',
+                    style: AppFonts.PrimaryColorText14,
+                  ),
+                ],
+              )
             ]),
           ),
           customSpaces.verticalspace20,

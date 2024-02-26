@@ -75,7 +75,7 @@ class PropertyDetailsScreen extends StatelessWidget {
                             radius: 8,
                             boxColor: Colors.transparent,
                             iconSize: 24,
-                            IconColor: Colors.white,
+                            iconColor: Colors.white,
                           ),
                         ),
                         Positioned(
@@ -90,7 +90,7 @@ class PropertyDetailsScreen extends StatelessWidget {
                                 radius: 8,
                                 boxColor: Colors.transparent,
                                 iconSize: 24,
-                                IconColor: Colors.white,
+                                iconColor: Colors.white,
                                 iconFunction: () async {
                                   await PropertyViewModel().deleteProperty(property.value.id!);
                                 },
@@ -102,7 +102,7 @@ class PropertyDetailsScreen extends StatelessWidget {
                                 radius: 8,
                                 boxColor: Colors.transparent,
                                 iconSize: 24,
-                                IconColor: Colors.white,
+                                iconColor: Colors.white,
                                 iconFunction: () {},
                               ),
                             ],

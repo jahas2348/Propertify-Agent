@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:propertify_for_agents/resources/constants/spaces%20&%20paddings/paddings.dart';
 import 'package:propertify_for_agents/resources/constants/spaces%20&%20paddings/spaces.dart';
 import 'package:propertify_for_agents/resources/fonts/app_fonts/app_fonts.dart';
@@ -56,7 +57,7 @@ class SocketManager {
   }
 
   SocketManager._internal() {
-    socket = IO.io('http://192.168.64.11:4000', <String, dynamic>{
+    socket = IO.io('http://10.4.3.252:4000', <String, dynamic>{
       'transports': ['websocket'],
     });
   }
@@ -75,9 +76,19 @@ class _InboxScreenState extends State<InboxScreen> {
   void initState() {
     super.initState();
     socket = SocketManager().socket;
+    // Removed data retrieval logic from initState
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // Fetch chat entries data whenever the screen is shown
+    fetchChatEntries();
+  }
+
+  void fetchChatEntries() {
     socket.emit('loadChatEntries');
     socket.on('chatEntries', handleLoadChatEntries);
-    socket.on('newChatEntry', handleNewChatEntry);
   }
 
   void handleLoadChatEntries(dynamic data) {
@@ -89,37 +100,46 @@ class _InboxScreenState extends State<InboxScreen> {
     }
   }
 
-  void handleNewChatEntry(dynamic data) {
-    print('Received new chat entry: $data');
-    if (data is List) {
-      setState(() {
-        chatEntries.addAll(data.map((item) => ChatEntry.fromJson(item)));
-      });
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Chat Entries'),
-      ),
-      body: ListView.builder(
-        itemCount: chatEntries.length,
-        itemBuilder: (context, index) {
-          return ListTile(
-            title: Text(chatEntries[index].id),
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) =>
-                      ChatScreen(chatEntryId: chatEntries[index].id),
-                ),
-              );
-            },
-          );
-        },
+      body: SafeArea(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            customSpaces.verticalspace20,
+            Padding(
+              padding: customPaddings.horizontalpadding20,
+              child: Text(
+                "Inbox",
+                style: AppFonts.SecondaryColorText28,
+              ),
+            ),
+            customSpaces.verticalspace10,
+            Divider(),
+            customSpaces.verticalspace10,
+            Expanded(
+              child: ListView.builder(
+                shrinkWrap: true,
+                itemCount: chatEntries.length,
+                itemBuilder: (context, index) {
+                  return ListTile(
+                    title: Text(chatEntries[index].id),
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) =>
+                              ChatScreen(chatEntryId: chatEntries[index].id),
+                        ),
+                      );
+                    },
+                  );
+                },
+              ),
+            ),
+          ],
+        ),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
@@ -132,7 +152,8 @@ class _InboxScreenState extends State<InboxScreen> {
 
   @override
   void dispose() {
-    // No need to disconnect here
+    // Clean up socket listeners
+    socket.off('chatEntries', handleLoadChatEntries);
     super.dispose();
   }
 }

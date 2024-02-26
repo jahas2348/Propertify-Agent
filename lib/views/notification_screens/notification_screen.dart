@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 import 'package:propertify_for_agents/resources/fonts/app_fonts/app_fonts.dart';
 import 'package:propertify_for_agents/view_models/controllers/notification_view_model.dart';
@@ -10,9 +11,8 @@ import '../../models/request_model.dart';
 
 class NotificationScreen extends StatelessWidget {
   NotificationScreen({Key? key}) : super(key: key);
-
+  final controller = Get.find<NotificationViewModel>();
   Future<void> _refresh() async {
-    final controller = Get.find<NotificationViewModel>();
     await controller.getAgentRequests(); // Fetch new data
   }
 
@@ -28,34 +28,49 @@ class NotificationScreen extends StatelessWidget {
               SliverList(
                 delegate: SliverChildListDelegate([
                   Column(
-                    
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       customSpaces.verticalspace20,
                       Padding(
                         padding: customPaddings.horizontalpadding20,
-                        child: Text(
-                          "Notifications",
-                          style: AppFonts.SecondaryColorText28,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              "Notifications",
+                              style: AppFonts.SecondaryColorText28,
+                            ),
+                            CircleAvatar(
+                              radius: 16,
+                              child: Text(
+                                controller.agentRequests.length.toString(),
+                                style: TextStyle(
+                                    fontWeight: FontWeight.w700, fontSize: 12),
+                              ),
+                            )
+                          ],
                         ),
                       ),
+                      customSpaces.verticalspace10,
+                      Divider(),
                       customSpaces.verticalspace10,
                       Column(
                         children: [
                           GetX<NotificationViewModel>(
                             initState: (_) {
-                              final controller = Get.find<NotificationViewModel>();
+                              final controller =
+                                  Get.find<NotificationViewModel>();
                               controller.getAgentRequests().then((_) {
                                 controller.isLoading.value = false;
                               });
                             },
                             builder: (controller) {
                               if (controller.isLoading.value) {
-                                return Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Center(child: CircularProgressIndicator()),
-                                  ],
+                                return Container(
+                                  height:
+                                      MediaQuery.of(context).size.height - 200,
+                                  child: Center(
+                                      child: CircularProgressIndicator()),
                                 );
                               } else if (controller.agentRequests.isEmpty) {
                                 return Center(
@@ -96,7 +111,6 @@ class NotificationScreen extends StatelessWidget {
   }
 }
 
-
 class NotificationWidget extends StatelessWidget {
   final Rx<RequestModel> request;
   NotificationWidget({Key? key, required this.request});
@@ -113,25 +127,33 @@ class NotificationWidget extends StatelessWidget {
       child: Padding(
         padding: customPaddings.horizontalpadding20,
         child: Container(
-
           decoration: BoxDecoration(
             color: Colors.white,
-            // border: Border.all(color: Colors.grey),
+            border: Border.all(color: Colors.grey.shade300),
             borderRadius: BorderRadius.circular(8),
           ),
-          padding: EdgeInsets.symmetric(horizontal: 15, vertical: 15),
+          padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               CircleAvatar(
+                radius: 16,
                 child: Text(
                   firstLetter,
                   style: AppFonts.WhiteColorText14Bold,
                 ),
               ),
-              Text(
-                  'You have a new request from ${request.value.user?.username ?? "Unknown agent"}'),
-              Icon(Icons.arrow_forward_ios_outlined, size: 16,),
+              customSpaces.horizontalspace10,
+              Expanded(
+                child: Text(
+                    maxLines: 1,
+                    style: TextStyle(overflow: TextOverflow.ellipsis),
+                    'You have a new request from ${request.value.user?.username ?? "Unknown agent"}'),
+              ),
+              Icon(
+                Icons.arrow_forward_ios_outlined,
+                size: 14,
+              ),
             ],
           ),
         ),

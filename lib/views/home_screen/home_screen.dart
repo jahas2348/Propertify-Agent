@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:propertify_for_agents/models/property_model.dart';
 import 'package:propertify_for_agents/resources/assets/propertify_icons.dart';
 import 'package:propertify_for_agents/resources/colors/app_colors.dart';
 import 'package:propertify_for_agents/resources/components/card_widgets/propertyCards/home_page_card.dart';
 import 'package:propertify_for_agents/resources/components/iconbox/customIconBox.dart';
 import 'package:propertify_for_agents/resources/fonts/app_fonts/app_fonts.dart';
 import 'package:propertify_for_agents/view_models/controllers/agent_view_model.dart';
+import 'package:propertify_for_agents/view_models/controllers/notification_view_model.dart';
+import 'package:propertify_for_agents/view_models/controllers/property_view_model.dart';
 import 'package:propertify_for_agents/views/add_property_screen/add_property_screen.dart';
 import 'package:propertify_for_agents/views/notification_screens/notification_screen.dart';
 import 'package:propertify_for_agents/resources/constants/spaces%20&%20paddings/paddings.dart';
@@ -14,6 +17,8 @@ import 'package:propertify_for_agents/resources/constants/spaces%20&%20paddings/
 class HomeScreen extends StatelessWidget {
   HomeScreen({super.key});
   final controller = Get.find<AgentViewModel>();
+  final ProperyController = Get.find<PropertyViewModel>();
+  final NotificationController = Get.find<NotificationViewModel>();
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -31,7 +36,7 @@ class HomeScreen extends StatelessWidget {
                   Row(
                     children: [
                       CustomIconBox(
-                        IconColor: AppColors.whiteColor,
+                        iconColor: AppColors.whiteColor,
                         boxheight: 40,
                         boxwidth: 40,
                         boxIcon: Icons.add,
@@ -39,6 +44,8 @@ class HomeScreen extends StatelessWidget {
                         boxColor: AppColors.secondaryColor,
                         iconSize: 20,
                         iconFunction: () {
+                          ProperyController.propertyLatitude.clear();
+                          ProperyController.propertyLongitude.clear();
                           Get.to(() => AddPropertyScreen());
                         },
                       ),
@@ -50,6 +57,7 @@ class HomeScreen extends StatelessWidget {
                     ],
                   ),
                   CustomIconBox(
+                    count: NotificationController.agentRequests.length,
                     boxheight: 40,
                     boxwidth: 40,
                     boxIcon: Icons.notifications_none_outlined,
@@ -58,9 +66,6 @@ class HomeScreen extends StatelessWidget {
                     iconSize: 24,
                     iconFunction: () {
                       Get.to(() => NotificationScreen());
-                      // Navigator.of(context).push(MaterialPageRoute(
-                      //   builder: (context) => NotificationScreen(),
-                      // ));
                     },
                   ),
                 ],
@@ -68,18 +73,25 @@ class HomeScreen extends StatelessWidget {
             ),
           ),
           customSpaces.verticalspace20,
+
           Padding(
             padding: customPaddings.horizontalpadding20,
             child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                Text(
+                  'Dashboard',
+                  style: AppFonts.SecondaryColorText20,
+                ),
+                customSpaces.verticalspace20,
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     Expanded(
                       child: dashboardBox(
                           dashboardIcon: PropertifyIcons.home,
-                          dashboardTitle: 'Properties',
+                          dashboardTitle: 'Approved',
                           dashboardValue: '2'),
                     ),
                     customSpaces.horizontalspace10,
@@ -96,16 +108,16 @@ class HomeScreen extends StatelessWidget {
                   children: [
                     Expanded(
                       child: dashboardBox(
-                          dashboardIcon: Icons.currency_rupee_outlined,
-                          dashboardTitle: 'Revenue',
-                          dashboardValue: '₹ 20,000'),
+                          dashboardIcon: PropertifyIcons.recent,
+                          dashboardTitle: 'Pending',
+                          dashboardValue: '1'),
                     ),
                     customSpaces.horizontalspace10,
                     Expanded(
                       child: dashboardBox(
-                          dashboardIcon: PropertifyIcons.user,
-                          dashboardTitle: 'Clients',
-                          dashboardValue: '1'),
+                          dashboardIcon: Icons.currency_rupee_outlined,
+                          dashboardTitle: 'Revenue',
+                          dashboardValue: '₹ 20,000'),
                     ),
                   ],
                 ),
@@ -156,93 +168,8 @@ class HomeScreen extends StatelessWidget {
             ),
           ),
           customSpaces.verticalspace20,
-          Padding(
-            padding: customPaddings.horizontalpadding20,
-            child: Container(
-              decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(4)),
-              child: Row(
-                children: [
-                  ClipRRect(
-                    borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(4),
-                      bottomLeft: Radius.circular(4),
-                    ),
-                    child: Container(
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10)),
-                      child: Image(
-                        height: 80,
-                        width: 110,
-                        image: NetworkImage(
-                            'https://images.unsplash.com/photo-1678575326996-a1bf09b86158?auto=format&fit=crop&q=80&w=1000&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxjb2xsZWN0aW9uLXBhZ2V8NHxhUk9zQ3pQM1F0b3x8ZW58MHx8fHx8'),
-                        fit: BoxFit.cover,
-                      ),
-                    ),
-                  ),
-                  Padding(
-                    padding: customPaddings.horizontalpadding20,
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          children: [
-                            Container(
-                              padding: EdgeInsets.symmetric(
-                                  horizontal: 10, vertical: 6),
-                              decoration: BoxDecoration(
-                                  color: AppColors.secondaryColor,
-                                  borderRadius: BorderRadius.circular(50)),
-                              child: Text(
-                                "Category",
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 10,
-                                ),
-                              ),
-                            ),
-                            customSpaces.horizontalspace10,
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Icon(
-                                  PropertifyIcons.location,
-                                  color: Colors.grey,
-                                  size: 12,
-                                ),
-                                customSpaces.horizontalspace5,
-                                Text(
-                                  "City",
-                                  style: AppFonts.greyText12,
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                        customSpaces.verticalspace5,
-                        Text(
-                          "Luxury House in Mukkam",
-                          style: AppFonts.SecondaryColorText14,
-                        ),
-                        customSpaces.verticalspace5,
-                        Text(
-                          '₹ 20,000',
-                          style: AppFonts.SecondaryColorText16,
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-          customSpaces.verticalspace20,
-          Padding(
-            padding: customPaddings.horizontalpadding20,
-            child: homePageCard(properties: controller.soldagentProperties),
+          HomePageSoldProperties(
+            properties: controller.soldagentProperties,
           ),
           customSpaces.verticalspace20,
         ]),

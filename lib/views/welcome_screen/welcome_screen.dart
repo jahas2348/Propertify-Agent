@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:propertify_for_agents/resources/assets/image_assets.dart';
 import 'package:propertify_for_agents/resources/colors/app_colors.dart';
 import 'package:propertify_for_agents/resources/components/buttons/custombuttons.dart';
 import 'package:propertify_for_agents/views/auth_screens/login_screen.dart';
@@ -22,7 +24,7 @@ class WelcomeScreen extends StatelessWidget {
             customSpaces.verticalspace40,
             Center(
               child: Image(
-                image: AssetImage('assets/images/welcome-image2.png'),
+                image: AssetImage(ImageAssets.welcomeImage2),
                 fit: BoxFit.cover,
                 height: 300,
               ),
@@ -30,14 +32,14 @@ class WelcomeScreen extends StatelessWidget {
             customSpaces.verticalspace20,
             Center(
               child: Image(
-                image: AssetImage('assets/images/logo/propertify-logo-agents-dark.png'),
+                image: AssetImage(ImageAssets.propertifylogoDark),
                 fit: BoxFit.cover,
                 height: 200,
               ),
             ),
             customSpaces.verticalspace20,
             Text(
-              'Agent Login ',
+              'Agent Login',
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontSize: 28,
@@ -46,19 +48,17 @@ class WelcomeScreen extends StatelessWidget {
               ),
             ),
             customSpaces.verticalspace20,
-            PrimaryButtonwithIcon(buttonText: 'Login with Phone Number',buttonIcon: Icons.phone,buttonFunction: () {
-              Navigator.of(context).push(MaterialPageRoute(builder: (context) => LoginScreen(),));
-            },),
+            PrimaryButtonwithIcon(
+              buttonText: 'Login with Phone Number',
+              buttonIcon: Icons.phone,
+              buttonFunction: () {
+                Get.off(() => LoginScreen());
+              },
+            ),
             customSpaces.verticalspace40,
-            
-           
           ],
         ),
       ),
     );
   }
 }
-
-
-
-

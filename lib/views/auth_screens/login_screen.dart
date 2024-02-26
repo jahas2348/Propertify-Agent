@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:propertify_for_agents/resources/assets/image_assets.dart';
 import 'package:propertify_for_agents/resources/colors/app_colors.dart';
 import 'package:propertify_for_agents/resources/components/buttons/custombuttons.dart';
 import 'package:propertify_for_agents/resources/components/input_fileds/custom_Input_Fields.dart';
@@ -9,7 +10,6 @@ import 'package:propertify_for_agents/resources/constants/spaces%20&%20paddings/
 import 'package:propertify_for_agents/resources/constants/spaces%20&%20paddings/spaces.dart';
 import 'package:propertify_for_agents/views/auth_screens/signup_screen.dart';
 
-
 class LoginScreen extends StatefulWidget {
   LoginScreen({super.key});
   @override
@@ -17,7 +17,7 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  final logincontroller = Get.put(LoginViewModel());
+  final loginController = Get.put(LoginViewModel());
 
   @override
   Widget build(BuildContext context) {
@@ -34,7 +34,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 customSpaces.verticalspace40,
                 Center(
                   child: Image(
-                    image: AssetImage('assets/images/welcome-image.png'),
+                    image: AssetImage(ImageAssets.welcomeImage),
                     fit: BoxFit.cover,
                     height: 300,
                   ),
@@ -74,13 +74,13 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
                 customSpaces.verticalspace20,
                 MobileInputField(
-                  controller: logincontroller.phoneNumberController.value,
+                  controller: loginController.phoneNumberController.value,
                 ),
                 customSpaces.verticalspace20,
                 PrimaryButton(
                   buttonText: 'Send OTP',
                   buttonFunction: () {
-                    logincontroller.verifyPhoneNumber();
+                    loginController.verifyPhoneNumber();
                   },
                 ),
                 customSpaces.verticalspace20,
@@ -88,11 +88,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   firstText: 'Trouble Logging In ?',
                   spanText: 'Contact us',
                   spanFunction: () {
-                    Navigator.of(context).pushReplacement(
-                      MaterialPageRoute(
-                        builder: (context) => SignUpScreen(),
-                      ),
-                    );
+                    Get.off(() => SignUpScreen());
                   },
                 ),
                 customSpaces.verticalspace40,

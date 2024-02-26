@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:propertify_for_agents/models/property_model.dart';
-import 'package:propertify_for_agents/services/api_endpoinds.dart';
+import 'package:propertify_for_agents/resources/app_urls/app_urls.dart';
 import 'package:http/http.dart' as http;
 import 'package:http_parser/http_parser.dart';
 
@@ -13,7 +13,7 @@ class ApiServices {
 
   //Get Agent Data
   Future<Map<String, dynamic>> getAgentData(String? agentPhone) async {
-    final url = Uri.parse('${ApiEndPoints.baseurl}${ApiEndPoints.getAgent}');
+    final url = Uri.parse('${AppUrl.getAgent}');
     final requestBody = jsonEncode({"mobNo": agentPhone});
     final response = await http.post(url, headers: _headers, body: requestBody);
     final agent = jsonDecode(response.body);
@@ -26,7 +26,7 @@ class ApiServices {
   Future<Map<String, dynamic>> checkAgentPhoneNumber(
       String formattedPhoneNumber) async {
     print('inside api function');
-    final url = Uri.parse('${ApiEndPoints.baseurl}${ApiEndPoints.checkAgent}');
+    final url = Uri.parse('${AppUrl.baseUrl}${AppUrl.agentExistence}');
     final requestBody = jsonEncode({"mobNo": formattedPhoneNumber});
     final response = await http.post(url, headers: _headers, body: requestBody);
     final agentPhone = jsonDecode(response.body);
@@ -38,7 +38,7 @@ class ApiServices {
   //Add Property Data
   Future<http.Response> addPropertyData(PropertyModel property) async {
     final url =
-        Uri.parse('${ApiEndPoints.baseurl}${ApiEndPoints.addPropertyData}');
+        Uri.parse('${AppUrl.baseUrl}${AppUrl.addPropertyData}');
     final request = http.MultipartRequest('POST', url);
 
     // Convert the PropertyModel to JSON
@@ -118,7 +118,7 @@ class ApiServices {
 
   Future<http.Response> updatePropertyData(PropertyModel property, List<int> removeIndexes) async {
   final id = property.id;
-  final url = Uri.parse('${ApiEndPoints.baseurl}${ApiEndPoints.updatePropertyData}/$id');
+  final url = Uri.parse('${AppUrl.baseUrl}${AppUrl.updatePropertyData}/$id');
   final request = http.MultipartRequest('PUT', url);
 
   // Convert the PropertyModel to JSON
@@ -217,7 +217,7 @@ class ApiServices {
 
   Future<Map<String, dynamic>> deleteProperty(String? id) async {
     final uri = Uri.parse(
-        '${ApiEndPoints.baseurl}${ApiEndPoints.deletePropertyById}/$id');
+        '${AppUrl.baseUrl}${AppUrl.deletePropertyById}/$id');
     final propertyId = jsonEncode({'propertyId': id});
     print(uri);
     print(propertyId);
@@ -234,7 +234,7 @@ class ApiServices {
     final vendorId = jsonEncode({'agent': id});
     print(vendorId);
     final url = Uri.parse(
-        '${ApiEndPoints.baseurl}${ApiEndPoints.getAllPropertiesbyAgent}');
+        '${AppUrl.baseUrl}${AppUrl.getAllProperties}');
     final response = await http.post(url, headers: _headers, body: vendorId);
     print(response.body);
     return jsonDecode(response.body);

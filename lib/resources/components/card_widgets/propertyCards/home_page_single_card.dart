@@ -5,7 +5,6 @@ import 'package:propertify_for_agents/models/property_model.dart';
 import 'package:propertify_for_agents/resources/assets/propertify_icons.dart';
 import 'package:propertify_for_agents/resources/colors/app_colors.dart';
 import 'package:propertify_for_agents/resources/fonts/app_fonts/app_fonts.dart';
-import 'package:propertify_for_agents/services/api_endpoinds.dart';
 import 'package:propertify_for_agents/resources/constants/spaces%20&%20paddings/paddings.dart';
 import 'package:propertify_for_agents/resources/constants/spaces%20&%20paddings/spaces.dart';
 import 'package:propertify_for_agents/views/properties_details_screen/property_details_screen.dart';

@@ -11,7 +11,6 @@ import 'package:propertify_for_agents/views/splash_screen/splash_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  // await FlutterConfig.loadEnvVariables();
   await Firebase.initializeApp();
   await SharedPref.instance.initStorage();
   runApp(propertify_for_agents());
@@ -26,8 +25,9 @@ class propertify_for_agents extends StatelessWidget {
 
     SystemChrome.setSystemUIOverlayStyle(
       SystemUiOverlayStyle(
-        statusBarColor:
-            systemBrightness == Brightness.light ? Colors.white : Colors.black,
+        statusBarColor: systemBrightness == Brightness.light
+            ? Colors.transparent
+            : Colors.black,
         statusBarIconBrightness: systemBrightness == Brightness.light
             ? Brightness.dark
             : Brightness.light,
@@ -41,11 +41,11 @@ class propertify_for_agents extends StatelessWidget {
     );
     return GetMaterialApp(
       initialBinding: InitController(),
-      home: SplashScreen(),
       getPages: AppRoutes.appRoutes(),
       translations: Languages(),
       locale: Locale('en', 'US'),
       fallbackLocale: Locale('en', 'US'),
+      home: SplashScreen(),
       theme: ThemeData(
         useMaterial3: false,
         progressIndicatorTheme: ProgressIndicatorThemeData(
