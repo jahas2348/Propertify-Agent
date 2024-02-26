@@ -1,5 +1,9 @@
 import 'dart:convert';
-
+import 'package:propertify_for_agents/views/inbox_screen/chat_model.dart';
+import 'package:propertify_for_agents/views/inbox_screen/chat_single_screen.dart';
+import 'package:propertify_for_agents/views/inbox_screen/inbox_screen.dart';
+import 'package:propertify_for_agents/views/inbox_screen/socket_manager.dart';
+import 'package:socket_io_client/socket_io_client.dart' as IO;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:propertify_for_agents/models/payment_request_sending_model.dart';
@@ -13,10 +17,8 @@ import 'package:propertify_for_agents/resources/constants/spaces%20&%20paddings/
 import 'package:propertify_for_agents/resources/constants/spaces%20&%20paddings/spaces.dart';
 import 'package:propertify_for_agents/resources/fonts/app_fonts/app_fonts.dart';
 import 'package:propertify_for_agents/view_models/controllers/notification_view_model.dart';
-import 'package:socket_io_client/socket_io_client.dart' as IO;
 import '../../models/request_model.dart';
 import '../../resources/components/card_widgets/propertyCards/home_page_single_card.dart';
-import '../chat_screen/chat_single_screen.dart';
 
 class NotificationSingleScreen extends StatefulWidget {
   Rx<RequestModel> request;
@@ -28,14 +30,36 @@ class NotificationSingleScreen extends StatefulWidget {
 }
 
 class _NotificationSingleScreenState extends State<NotificationSingleScreen> {
-  // late NotificationViewModel notificationController;
-  startChat(BuildContext context) async {
-    // Establish a Socket.io connection with the server
+  late IO.Socket socket;
+  @override
+  void initState() {
+    super.initState();
+    socket = SocketManager().socket;
+    socket.on('newChatEntry', handleNewChatEntry);
+  }
 
-    // Navigate to ChatSingleScreen and pass the request and socket
-    Get.to(ChatSingleScreen(
-      request: widget.request,
-    ));
+  void handleNewChatEntry(dynamic data) {
+    print('Received new chat entry: $data');
+    if (data is List) {
+      setState(() {
+        SocketManager()
+            .chatEntries
+            .addAll(data.map((item) => ChatEntry.fromJson(item)));
+      });
+
+      if (SocketManager().chatEntries.isNotEmpty) {
+        print('Navigating to Chat Screen...');
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) =>
+                ChatScreen(chatEntryId: SocketManager().chatEntries.last.id),
+          ),
+        );
+      } else {
+        print('Error: No chat entry created.');
+      }
+    }
   }
 
   @override
@@ -44,6 +68,7 @@ class _NotificationSingleScreenState extends State<NotificationSingleScreen> {
     String firstLetter =
         widget.request.value.user?.username?[0].toUpperCase() ?? '';
     return Scaffold(
+      backgroundColor: Colors.grey.shade200,
       body: SafeArea(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -54,11 +79,14 @@ class _NotificationSingleScreenState extends State<NotificationSingleScreen> {
               child: Row(
                 children: [
                   CustomIconBox(
+                      iconFunction: () {
+                        Get.back();
+                      },
                       boxheight: 40,
                       boxwidth: 40,
                       boxIcon: Icons.arrow_back,
                       radius: 8,
-                      boxColor: Colors.grey.shade300,
+                      boxColor: Colors.white,
                       iconSize: 20),
                   customSpaces.horizontalspace20,
                   Text(
@@ -68,15 +96,18 @@ class _NotificationSingleScreenState extends State<NotificationSingleScreen> {
                 ],
               ),
             ),
-            customSpaces.verticalspace20,
+            customSpaces.verticalspace10,
+            Divider(),
+            customSpaces.verticalspace10,
             Padding(
               padding: customPaddings.horizontalpadding20,
               child: Container(
                 decoration: BoxDecoration(
-                  border: Border.all(color: Colors.grey),
+                  color: Colors.white,
+                  border: Border.all(color: Colors.grey.shade300),
                   borderRadius: BorderRadius.circular(8),
                 ),
-                padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                padding: EdgeInsets.symmetric(horizontal: 10, vertical: 20),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
@@ -104,45 +135,48 @@ class _NotificationSingleScreenState extends State<NotificationSingleScreen> {
                     customSpaces.verticalspace10,
                     Row(
                       children: [
-                        Expanded(
-                          child: Container(
-                            child: CustomColorButton(
-                              buttonText: 'Decline',
-                              buttonFunction: () {},
-                              buttonColor: Colors.red,
-                            ),
-                          ),
+                        CircleAvatar(
+                          backgroundColor: Colors.red.shade100,
+                          child: IconButton(
+                              onPressed: () {},
+                              icon: Icon(
+                                Icons.close,
+                                size: 18,
+                                color: Colors.red.shade900,
+                              )),
+                        ),
+                        customSpaces.horizontalspace10,
+                        CircleAvatar(
+                          backgroundColor: Colors.green.shade100,
+                          child: IconButton(
+                              onPressed: () async {
+                                socket.emit('createChatEntry');
+                                //          Navigator.push(
+                                //   context,
+                                //   MaterialPageRoute(
+                                //     builder: (context) =>
+                                //         ChatScreen(chatEntryId:  SocketManager().chatEntries[index].id),
+                                //   ),
+                                // );
+                              },
+                              icon: Icon(
+                                Icons.check,
+                                size: 18,
+                                color: Colors.green.shade900,
+                              )),
                         ),
                         customSpaces.horizontalspace10,
                         Expanded(
                           child: Container(
                             child: CustomColorButton(
-
-                              buttonText: 'Accept',
-                              buttonFunction: () async {
-                                await startChat(context);
-                              },
-                              buttonColor: Colors.green,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    customSpaces.verticalspace10,
-                    Row(
-                      children: [
-                        Expanded(
-                          child: Container(
-                            child: CustomColorButton(
                               buttonText: 'Send Payment Info',
                               buttonFunction: () {
-                                _showTagBottomSheet(context);
+                                _showCustomPriceBottomSheet(context);
                               },
                               buttonColor: AppColors.primaryColor,
                             ),
                           ),
                         ),
-                       
                       ],
                     ),
                   ],
@@ -154,8 +188,8 @@ class _NotificationSingleScreenState extends State<NotificationSingleScreen> {
       ),
     );
   }
-  void _showTagBottomSheet(BuildContext context) {
-   
+
+  void _showCustomPriceBottomSheet(BuildContext context) {
     TextEditingController priceController = TextEditingController();
 
     showModalBottomSheet(
@@ -170,11 +204,10 @@ class _NotificationSingleScreenState extends State<NotificationSingleScreen> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                
                 CustomInputField(
-                  fieldIcon: Icons.tag,
-                controller: priceController,
-                 hintText: 'Please enter Price',
+                  fieldIcon: Icons.currency_rupee_outlined,
+                  controller: priceController,
+                  hintText: 'Enter Your Custom Price',
                 ),
                 customSpaces.verticalspace10,
                 Row(
@@ -183,29 +216,25 @@ class _NotificationSingleScreenState extends State<NotificationSingleScreen> {
                       child: PrimaryButton(
                         buttonText: 'Send',
                         buttonFunction: () async {
-                          
                           final newPrice = priceController.text;
                           if (newPrice.isEmpty) {
-                            showCustomToast(context, 'Price cannot be empty',AppColors.alertColor);
+                            showCustomToast(context, 'Price cannot be empty',
+                                AppColors.alertColor);
                           }
-                          if(newPrice.isNotEmpty){
-                            PaymentRequestSendingModel payment = PaymentRequestSendingModel (
+                          if (newPrice.isNotEmpty) {
+                            PaymentRequestSendingModel payment =
+                                PaymentRequestSendingModel(
                               agent: widget.request.value.agent,
                               user: widget.request.value.user!.id,
                               property: widget.request.value.property!.id!,
                               paymentAmount: newPrice,
-
                             );
-                            
+
                             print(payment.toJson());
-                            Get.find<NotificationViewModel>().sendPaymentRequest(payment,context);
-                        
+                            Get.find<NotificationViewModel>()
+                                .sendPaymentRequest(payment, context);
                           }
-                          
-                         
-                          
                         },
-                       
                       ),
                     ),
                   ],
