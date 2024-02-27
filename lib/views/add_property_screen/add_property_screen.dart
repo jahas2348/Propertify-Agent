@@ -169,11 +169,11 @@ class _AddPropertyScreenState extends State<AddPropertyScreen> {
                                 fieldIcon: PropertifyIcons.home,
                                 hintText: 'Enter Property Name',
                                 controller: propertyController.propertyName,
-                                validator: (value) {
-                                  return propertyController
-                                      .validatePropertyData(
-                                          value, 'Property Name');
-                                },
+                                // validator: (value) {
+                                //   return propertyController
+                                //       .validatePropertyData(
+                                //           value, 'Property Name');
+                                // },
                               ),
                               customSpaces.verticalspace20,
                               // Track the index of the selected item
@@ -208,6 +208,8 @@ class _AddPropertyScreenState extends State<AddPropertyScreen> {
                                         setState(() {
                                           selectedIndex = index;
                                         });
+                                        propertyController
+                                            .selectedCategory.value = category;
                                         print("$category selected");
                                         // Handle onTap event for the selected category
                                       },
@@ -305,8 +307,8 @@ class _AddPropertyScreenState extends State<AddPropertyScreen> {
                                     child: CustomInputField(
                                       fieldIcon: PropertifyIcons.bed,
                                       hintText: 'Enter Rooms',
-                                      // controller:
-                                      //     propertyController.propertyPrice,
+                                      controller:
+                                          propertyController.propertyRooms,
                                       keyboardType: TextInputType.number,
                                       // validator: (value) {
                                       //   return propertyController
@@ -320,8 +322,8 @@ class _AddPropertyScreenState extends State<AddPropertyScreen> {
                                     child: CustomInputField(
                                       fieldIcon: Icons.shower_outlined,
                                       hintText: 'Enter Bathrooms',
-                                      // controller: propertyController
-                                      //     .propertyPrice, // You should update this controller to a different one for bathrooms
+                                      controller: propertyController
+                                          .propertyBathrooms, // You should update this controller to a different one for bathrooms
                                       keyboardType: TextInputType.number,
                                       // validator: (value) {
                                       //   return propertyController
@@ -336,7 +338,7 @@ class _AddPropertyScreenState extends State<AddPropertyScreen> {
                               CustomInputField(
                                 fieldIcon: PropertifyIcons.sqft,
                                 hintText: 'Enter Sqft',
-                                // controller: propertyController.propertyPrice,
+                                controller: propertyController.propertySqft,
                                 keyboardType: TextInputType.number,
                                 // validator: (value) {
                                 //   return propertyController
@@ -350,10 +352,10 @@ class _AddPropertyScreenState extends State<AddPropertyScreen> {
                                 hintText: 'Enter Property Price',
                                 controller: propertyController.propertyPrice,
                                 keyboardType: TextInputType.number,
-                                validator: (value) {
-                                  return propertyController
-                                      .validatePropertyPrice(value);
-                                },
+                                // validator: (value) {
+                                //   return propertyController
+                                //       .validatePropertyPrice(value);
+                                // },
                               ),
 
                               customSpaces.verticalspace20,
@@ -362,8 +364,9 @@ class _AddPropertyScreenState extends State<AddPropertyScreen> {
                                 hintText: 'Enter Property City',
                                 controller: propertyController.propertyCity,
                                 // validator: (value) {
-                                //   return propertyController.validatePropertyData(
-                                //       value, 'Property City');
+                                //   return propertyController
+                                //       .validatePropertyData(
+                                //           value, 'Property City');
                                 // },
                               ),
                               customSpaces.verticalspace20,
@@ -371,21 +374,21 @@ class _AddPropertyScreenState extends State<AddPropertyScreen> {
                                 fieldIcon: Icons.map_outlined,
                                 hintText: 'Enter Property State',
                                 controller: propertyController.propertyState,
-                                validator: (value) {
-                                  return propertyController
-                                      .validatePropertyData(
-                                          value, 'Property State');
-                                },
+                                // validator: (value) {
+                                //   return propertyController
+                                //       .validatePropertyData(
+                                //           value, 'Property State');
+                                // },
                               ),
                               customSpaces.verticalspace20,
                               CustomInputField(
                                 fieldIcon: Icons.pin_outlined,
                                 hintText: 'Enter Property Pincode',
                                 controller: propertyController.propertyPincode,
-                                validator: (value) {
-                                  return propertyController
-                                      .validatePropertyPincode(value);
-                                },
+                                // validator: (value) {
+                                //   return propertyController
+                                //       .validatePropertyPincode(value);
+                                // },
                                 keyboardType: TextInputType.number,
                               ),
                               customSpaces.verticalspace20,
@@ -409,48 +412,56 @@ class _AddPropertyScreenState extends State<AddPropertyScreen> {
                               ),
                               customSpaces.verticalspace20,
 
+                              // MultiImagePickerWidget(
+                              //   onImagesSelected: (images, removeIndexes) {
+                              //     setState(() {
+                              //       if (widget.property != null) {
+                              //         // Update propertyGalleryPictures when images are selected
+                              //         propertyController
+                              //             .propertyGalleryPictures = images;
+
+                              //         // Handle image deletions here
+                              //         final selectedImageUrls = images!
+                              //             .map((image) => image.path)
+                              //             .toList();
+                              //         final existingImageUrls = widget.property!
+                              //                 .value?.propertyGalleryPictures
+                              //                 ?.map((image) => '${image.path}')
+                              //                 .toList() ??
+                              //             [];
+
+                              //         // Calculate which images were deleted
+                              //         final deletedImageUrls = existingImageUrls
+                              //             .where((imageUrl) =>
+                              //                 !selectedImageUrls
+                              //                     .contains(imageUrl))
+                              //             .map((imageUrl) => imageUrl
+                              //                 .replaceAll(AppUrl.baseUrl, ''))
+                              //             .toList();
+
+                              //         print(
+                              //             'Deleted Image URLs: $deletedImageUrls');
+                              //       }
+                              //     });
+                              //   },
+                              //   initialImageUrls: widget.property?.value
+                              //               ?.propertyGalleryPictures !=
+                              //           null
+                              //       ? widget.property!.value!
+                              //           .propertyGalleryPictures!
+                              //           .map((image) => '${image.path}')
+                              //           .toList()
+                              //       : [],
+                              //   property:
+                              //       widget.property, // Pass the property here
+                              // ),
                               MultiImagePickerWidget(
                                 onImagesSelected: (images, removeIndexes) {
-                                  setState(() {
-                                    if (widget.property != null) {
-                                      // Update propertyGalleryPictures when images are selected
-                                      propertyController
-                                          .propertyGalleryPictures = images;
-
-                                      // Handle image deletions here
-                                      final selectedImageUrls = images!
-                                          .map((image) => image.path)
-                                          .toList();
-                                      final existingImageUrls = widget.property!
-                                              .value?.propertyGalleryPictures
-                                              ?.map((image) => '${image.path}')
-                                              .toList() ??
-                                          [];
-
-                                      // Calculate which images were deleted
-                                      final deletedImageUrls = existingImageUrls
-                                          .where((imageUrl) =>
-                                              !selectedImageUrls
-                                                  .contains(imageUrl))
-                                          .map((imageUrl) => imageUrl
-                                              .replaceAll(AppUrl.baseUrl, ''))
-                                          .toList();
-
-                                      print(
-                                          'Deleted Image URLs: $deletedImageUrls');
-                                    }
-                                  });
+                                  propertyController.propertyGalleryPictures =
+                                      images;
                                 },
-                                initialImageUrls: widget.property?.value
-                                            ?.propertyGalleryPictures !=
-                                        null
-                                    ? widget.property!.value!
-                                        .propertyGalleryPictures!
-                                        .map((image) => '${image.path}')
-                                        .toList()
-                                    : [],
-                                property:
-                                    widget.property, // Pass the property here
+                                initialImageUrls: [], // Provide initial image URLs if needed
+                                initialRemoveIndexes: [], // Provide initial remove indexes if needed
                               ),
 
                               customSpaces.verticalspace20,
@@ -465,11 +476,11 @@ class _AddPropertyScreenState extends State<AddPropertyScreen> {
                                 maxLines: 8,
                                 controller:
                                     propertyController.propertyDescription,
-                                validator: (value) {
-                                  return propertyController
-                                      .validatePropertyData(
-                                          value, 'Property Overview');
-                                },
+                                // validator: (value) {
+                                //   return propertyController
+                                //       .validatePropertyData(
+                                //           value, 'Property Overview');
+                                // },
                               ),
                               customSpaces.verticalspace20,
                               Text(
@@ -647,8 +658,6 @@ class _AddPropertyScreenState extends State<AddPropertyScreen> {
                             if (widget.property == null) {
                               await propertyController.addPropertyData();
                             } else {
-                              // final property = widget.property?.value;
-
                               final propertyId = widget.property!.value.id;
 
                               if (propertyId != null) {
@@ -659,9 +668,7 @@ class _AddPropertyScreenState extends State<AddPropertyScreen> {
                                 print(
                                     'Unable to update property - ID is null.');
                               }
-                              print('updating success');
                             }
-                            print('updating success');
                           },
                         ),
                       ),

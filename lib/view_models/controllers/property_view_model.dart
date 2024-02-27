@@ -31,6 +31,11 @@ class PropertyViewModel extends GetxController {
   RxString selectedCategory = ''.obs;
 
   final propertyName = TextEditingController();
+
+  final propertyRooms = TextEditingController();
+  final propertyBathrooms = TextEditingController();
+  final propertySqft = TextEditingController();
+
   final propertyCategory = TextEditingController();
 
   final propertyLatitude = TextEditingController();
@@ -41,7 +46,7 @@ class PropertyViewModel extends GetxController {
   final propertyState = TextEditingController();
   final propertyPincode = TextEditingController();
   File? propertyCoverPicture;
-  List<XFile>? propertyGalleryPictures = [];
+  List<XFile>? propertyGalleryPictures;
   final propertyDescription = TextEditingController();
   List<String> amenities = [];
   List<String> tags = [];
@@ -88,55 +93,75 @@ class PropertyViewModel extends GetxController {
   addPropertyData() async {
     submitButtonPressed.value = true;
 
-    final propertyFormKeyIsValid =
-        propertyformkey.currentState?.validate() ?? false;
-    final isCategorySelected =
-        selectedCategory != null && selectedCategory!.value.isNotEmpty;
+    // final propertyFormKeyIsValid =
+    //     propertyformkey.currentState?.validate() ?? false;
+    // final isCategorySelected =
+    //     selectedCategory != null && selectedCategory!.value.isNotEmpty;
 
-    if (propertyFormKeyIsValid && isCategorySelected) {
-      PropertyModel property = PropertyModel(
-        agent: agentId,
-        propertyName: propertyName.value.text,
-        propertyPrice: propertyPrice.value.text,
-        propertyCategory: selectedCategory.value,
-        propertyCity: propertyCity.value.text,
-        propertyState: propertyState.value.text,
-        propertyZip: propertyPincode.value.text,
-        propertyCoverPicture: propertyCoverPicture,
-        propertyGalleryPictures: propertyGalleryPictures,
-        propertyDescription: propertyDescription.value.text,
-        latitude: propertyLatitude.value.text,
-        longitude: propertyLongitude.value.text,
-        amenities: amenities,
-        isApproved: false,
-        isSold: false,
-        tags: tags,
-      );
+    // if (propertyFormKeyIsValid && isCategorySelected) {
+    PropertyModel property = PropertyModel(
+      agent: agentId,
+      propertyName: propertyName.value.text,
+      propertyRooms: propertyRooms.value.text,
+      propertyBathrooms: propertyBathrooms.value.text,
+      propertySqft: propertySqft.value.text,
+      propertyPrice: propertyPrice.value.text,
+      propertyCategory: selectedCategory.value,
+      propertyCity: propertyCity.value.text,
+      propertyState: propertyState.value.text,
+      propertyZip: propertyPincode.value.text,
+      propertyCoverPicture: propertyCoverPicture,
+      propertyGalleryPictures: propertyGalleryPictures,
+      propertyDescription: propertyDescription.value.text,
+      latitude: propertyLatitude.value.text,
+      longitude: propertyLongitude.value.text,
+      amenities: amenities,
+      isApproved: false,
+      isSold: false,
+      tags: tags,
+    );
+    // print(property.agent);
+    // print(property.propertyName);
+    // print(property.propertyRooms);
+    // print(property.propertyBathrooms);
+    // print(property.propertySqft);
+    // print(property.propertyCategory);
+    // print(property.latitude);
+    // print(property.longitude);
+    // print(property.propertyPrice);
+    // print(property.propertyCity);
+    // print(property.propertyState);
+    // print(property.propertyZip);
+    // print(property.propertyDescription);
+    // print(property.propertyCoverPicture);
+    print(property.propertyGalleryPictures);
+    // print(property.amenities);
+    // print(property.tags);
 
-      try {
-        final response = await ApiServices.instance.addPropertyData(property);
+    try {
+      final response = await ApiServices.instance.addPropertyData(property);
+      print(response.body);
+
+      if (response.statusCode == 200) {
         print(response.body);
-
-        if (response.statusCode == 200) {
-          print(response.body);
-          await Get.find<AgentViewModel>().getAgentProperties();
-          Get.find<AgentViewModel>().update();
-          Get.back();
-          await Utils.snackBar(
-            'Success',
-            'Property Added Successfully',
-          );
-        } else {
-          print('Error occurred while adding the property');
-        }
-      } catch (e) {
-        print('Error: $e');
+        await Get.find<AgentViewModel>().getAgentProperties();
+        Get.find<AgentViewModel>().update();
+        Get.back();
+        await Utils.snackBar(
+          'Success',
+          'Property Added Successfully',
+        );
+      } else {
+        print('Error occurred while adding the property');
       }
-    } else {
-      if (!isCategorySelected) {
-        Utils.snackBar('Error', 'Category Not Selected');
-      }
+    } catch (e) {
+      print('Error: $e');
     }
+    // } else {
+    //   if (!isCategorySelected) {
+    //     Utils.snackBar('Error', 'Category Not Selected');
+    //   }
+    // }
   }
 
   UpdatePropertyData(Rx<PropertyModel> Property) async {
@@ -256,6 +281,4 @@ class PropertyViewModel extends GetxController {
     tags.clear();
     removeIndexes.clear();
   }
-
-  
 }
