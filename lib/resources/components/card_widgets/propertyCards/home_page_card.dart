@@ -63,8 +63,8 @@ class HomePageSoldProperties extends StatelessWidget {
           return properties.isEmpty
               ? Center(
                   child: Container(
-                      padding: EdgeInsets.symmetric(vertical: 20),
-                      child: Text('No Properties')))
+                      padding: EdgeInsets.symmetric(vertical: 60),
+                      child: Text('No Properties Sold Yet')))
               : Container(
                   child: ListView.builder(
                   physics: NeverScrollableScrollPhysics(),

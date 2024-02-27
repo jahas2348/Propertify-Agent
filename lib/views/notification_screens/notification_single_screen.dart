@@ -40,7 +40,8 @@ class _NotificationSingleScreenState extends State<NotificationSingleScreen> {
 
   void handleNewChatEntry(dynamic data) {
     print('Received new chat entry: $data');
-    if (data is List) {
+    if (data is List && mounted) {
+      // Check if the widget is mounted
       setState(() {
         SocketManager()
             .chatEntries
@@ -52,8 +53,10 @@ class _NotificationSingleScreenState extends State<NotificationSingleScreen> {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) =>
-                ChatScreen(chatEntryId: SocketManager().chatEntries.last.id),
+            builder: (context) => ChatScreen(
+              chatEntryId: SocketManager().chatEntries.last.id,
+              request: widget.request,
+            ),
           ),
         );
       } else {
@@ -151,13 +154,6 @@ class _NotificationSingleScreenState extends State<NotificationSingleScreen> {
                           child: IconButton(
                               onPressed: () async {
                                 socket.emit('createChatEntry');
-                                //          Navigator.push(
-                                //   context,
-                                //   MaterialPageRoute(
-                                //     builder: (context) =>
-                                //         ChatScreen(chatEntryId:  SocketManager().chatEntries[index].id),
-                                //   ),
-                                // );
                               },
                               icon: Icon(
                                 Icons.check,

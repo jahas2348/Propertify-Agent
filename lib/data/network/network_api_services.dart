@@ -46,77 +46,80 @@ class NetworkApiServices extends BaseApiServices {
       print(responseJson);
     } on SocketException {
       throw InternetException(message: '');
-      
     } on RequestTimeOut {
       throw RequestTimeOut(message: '');
     }
     return responseJson;
   }
 
+  Future<http.MultipartRequest> createMultipartRequest(
+      PropertyModel property) async {
+    final url = Uri.parse(AppUrl.addPropertyData);
+    final request = http.MultipartRequest('POST', url);
 
-  Future<http.MultipartRequest> createMultipartRequest(PropertyModel property) async {
-  final url = Uri.parse(AppUrl.addPropertyData);
-  final request = http.MultipartRequest('POST', url);
+    // Convert the PropertyModel to JSON
+    final propertyJson = property.toJson();
 
-  // Convert the PropertyModel to JSON
-  final propertyJson = property.toJson();
+    request.fields['agent'] = property.agent;
+    request.fields['propertyName'] = property.propertyName;
+    request.fields['propertyPrice'] = property.propertyPrice;
+    request.fields['propertyCategory'] = property.propertyCategory;
+    request.fields['propertyCity'] = property.propertyCity;
+    request.fields['propertyState'] = property.propertyState ?? '';
+    request.fields['propertyZip'] = property.propertyZip ?? '';
+    request.fields['propertyDescription'] = property.propertyDescription ?? '';
+    request.fields['longitude'] = property.longitude ?? '';
+    request.fields['latitude'] = property.latitude ?? '';
+    request.fields['isApproved'] = property.isApproved?.toString() ?? 'false';
 
-  request.fields['agent'] = property.agent;
-  request.fields['propertyName'] = property.propertyName;
-  request.fields['propertyPrice'] = property.propertyPrice;
-  request.fields['propertyCategory'] = property.propertyCategory;
-  request.fields['propertyCity'] = property.propertyCity;
-  request.fields['propertyState'] = property.propertyState ?? '';
-  request.fields['propertyZip'] = property.propertyZip ?? '';
-  request.fields['propertyDescription'] = property.propertyDescription ?? '';
-  request.fields['longitude'] = property.longitude ?? '';
-  request.fields['latitude'] = property.latitude ?? '';
-  request.fields['isApproved'] = property.isApproved?.toString() ?? 'false';
-
-  if (property.propertyCoverPicture != null) {
-    final imageStream = http.ByteStream(property.propertyCoverPicture!.openRead());
-    final imageLength = await property.propertyCoverPicture!.length();
-
-    final multipartFile = http.MultipartFile(
-      'propertyCoverPicture',
-      imageStream,
-      imageLength,
-      filename: 'cover_picture.jpg', // Change the filename as needed
-    );
-
-    request.files.add(multipartFile);
-  }
-
-  if (property.propertyGalleryPictures != null && property.propertyGalleryPictures!.isNotEmpty) {
-    for (final galleryPicture in property.propertyGalleryPictures!) {
-      final imageStream = http.ByteStream(galleryPicture.openRead());
-      final imageLength = await galleryPicture.length();
+    if (property.propertyCoverPicture != null) {
+      final imageStream =
+          http.ByteStream(property.propertyCoverPicture!.openRead());
+      final imageLength = await property.propertyCoverPicture!.length();
 
       final multipartFile = http.MultipartFile(
-        'propertyGalleryPictures[]', // Use [] to represent an array
+        'propertyCoverPicture',
         imageStream,
         imageLength,
-        filename: 'gallery_picture.jpg', // Change the filename as needed
+        filename: 'cover_picture.jpg', // Change the filename as needed
       );
 
       request.files.add(multipartFile);
     }
+
+    if (property.propertyGalleryPictures != null &&
+        property.propertyGalleryPictures!.isNotEmpty) {
+      for (final galleryPicture in property.propertyGalleryPictures!) {
+        final imageStream = http.ByteStream(galleryPicture.openRead());
+        final imageLength = await galleryPicture.length();
+
+        final multipartFile = http.MultipartFile(
+          'propertyGalleryPictures[]', // Use [] to represent an array
+          imageStream,
+          imageLength,
+          filename: 'gallery_picture.jpg', // Change the filename as needed
+        );
+
+        request.files.add(multipartFile);
+      }
+    }
+
+    for (var i = 0; i < propertyJson['amenities'].length; i++) {
+      request.fields['amenities[$i][amenityname]'] =
+          propertyJson['amenities'][i]['amenityname'];
+      request.fields['amenities[$i][amenityValue]'] =
+          propertyJson['amenities'][i]['amenityValue'];
+    }
+
+    return request;
   }
 
-  for (var i = 0; i < propertyJson['amenities'].length; i++) {
-    request.fields['amenities[$i][amenityname]'] = propertyJson['amenities'][i]['amenityname'];
-    request.fields['amenities[$i][amenityValue]'] = propertyJson['amenities'][i]['amenityValue'];
+  Future<http.Response> sendMultipartRequest(
+      http.MultipartRequest request) async {
+    final response = await request.send();
+    final responseString = await response.stream.bytesToString();
+    return http.Response(responseString, response.statusCode);
   }
-
-  return request;
-}
-
-Future<http.Response> sendMultipartRequest(http.MultipartRequest request) async {
-  final response = await request.send();
-  final responseString = await response.stream.bytesToString();
-  return http.Response(responseString, response.statusCode);
-}
-
 
   dynamic returnResponse(http.Response response) {
     switch (response.statusCode) {

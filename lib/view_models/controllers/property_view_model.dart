@@ -11,18 +11,15 @@ import 'package:propertify_for_agents/view_models/controllers/agent_view_model.d
 import 'package:propertify_for_agents/views/navigation/navigation.dart';
 
 class PropertyViewModel extends GetxController {
-
   PropertyModel? property;
-  
 
   final agentViewModel = Get.find<AgentViewModel>();
 
   PropertyViewModel({this.property});
-  
+
   String get agentId => agentViewModel.agentId;
 
   final _api = PropertyRepository();
-
 
   RxBool submitButtonPressed = false.obs;
   final List<String> Categories = [
@@ -35,11 +32,9 @@ class PropertyViewModel extends GetxController {
 
   final propertyName = TextEditingController();
   final propertyCategory = TextEditingController();
-  
+
   final propertyLatitude = TextEditingController();
   final propertyLongitude = TextEditingController();
-
-
 
   final propertyPrice = TextEditingController();
   final propertyCity = TextEditingController();
@@ -52,8 +47,6 @@ class PropertyViewModel extends GetxController {
   List<String> tags = [];
   List<int> removeIndexes = [];
   final GlobalKey<FormState> propertyformkey = GlobalKey<FormState>();
-  
-  
 
   String? validatePropertyData(String? value, String fieldName) {
     if (value == null || value.isEmpty) {
@@ -93,8 +86,6 @@ class PropertyViewModel extends GetxController {
   }
 
   addPropertyData() async {
-
-
     submitButtonPressed.value = true;
 
     final propertyFormKeyIsValid =
@@ -123,31 +114,31 @@ class PropertyViewModel extends GetxController {
       );
 
       try {
-      final response = await ApiServices.instance.addPropertyData(property);
-      print(response.body);
-
-      if (response.statusCode == 200) {
-        
+        final response = await ApiServices.instance.addPropertyData(property);
         print(response.body);
-        await Get.find<AgentViewModel>().getAgentProperties();
-        Get.find<AgentViewModel>().update();
-        Get.back();
-        await Utils.snackBar('Success', 'Property Added Successfully',);
 
-      } else {
-        print('Error occurred while adding the property');
+        if (response.statusCode == 200) {
+          print(response.body);
+          await Get.find<AgentViewModel>().getAgentProperties();
+          Get.find<AgentViewModel>().update();
+          Get.back();
+          await Utils.snackBar(
+            'Success',
+            'Property Added Successfully',
+          );
+        } else {
+          print('Error occurred while adding the property');
+        }
+      } catch (e) {
+        print('Error: $e');
       }
-    } catch (e) {
-      print('Error: $e');
-    }
     } else {
       if (!isCategorySelected) {
         Utils.snackBar('Error', 'Category Not Selected');
       }
-     
     }
   }
-  
+
   UpdatePropertyData(Rx<PropertyModel> Property) async {
     submitButtonPressed.value = true;
 
@@ -178,46 +169,40 @@ class PropertyViewModel extends GetxController {
       );
 
       try {
-      final response = await ApiServices.instance.updatePropertyData(newproperty,removeIndexes);
-      print(response.body);
-
-      if (response.statusCode == 200) {
-        property = newproperty;
+        final response = await ApiServices.instance
+            .updatePropertyData(newproperty, removeIndexes);
         print(response.body);
-        await Get.find<AgentViewModel>().getAgentProperties();
-       
-        Get.find<AgentViewModel>().update();
-        Get.to(NavigationItems());
 
-      } else {
-        print('Error occurred while adding the property');
+        if (response.statusCode == 200) {
+          property = newproperty;
+          print(response.body);
+          await Get.find<AgentViewModel>().getAgentProperties();
+
+          Get.find<AgentViewModel>().update();
+          Get.to(NavigationItems());
+        } else {
+          print('Error occurred while adding the property');
+        }
+      } catch (e) {
+        print('Error: $e');
       }
-    } catch (e) {
-      print('Error: $e');
-    }
-      
     } else {
       if (!isCategorySelected) {
         Utils.snackBar('Error', 'Category Not Selected');
       }
-    
     }
   }
 
   deleteProperty(String id) async {
-
-    
     try {
       final response = await ApiServices.instance.deleteProperty(id);
       print(response);
 
-      if (response['status']=='success') {
-        
+      if (response['status'] == 'success') {
         await Get.find<AgentViewModel>().getAgentProperties();
         Get.find<AgentViewModel>().update();
         Get.to(NavigationItems());
         await Utils.snackBar('Success', 'Property Deleted Successfully');
-
       } else {
         print('Error occurred while adding the property');
       }
@@ -225,38 +210,52 @@ class PropertyViewModel extends GetxController {
       print('Error: $e');
     }
   }
-  
 
- @override
-void onReady() {
-  super.onReady();
-  if (property != null) {
-    propertyName.text = property!.propertyName;
-    propertyPrice.text = property!.propertyPrice;
-    propertyCategory.text = property!.propertyCategory;
-    propertyCity.text = property!.propertyCity;
-    propertyState.text = property!.propertyState!;
-    propertyPincode.text = property!.propertyZip!;
-    propertyDescription.text = property!.propertyDescription!;
-    propertyLatitude.text = property!.latitude!;
-    propertyLongitude.text = property!.longitude!;
-    amenities = property!.amenities!;
-    tags = property!.tags!;
-    if (property != null && property!.amenities != null) {
-  amenities.addAll(property!.amenities!);
-}
+  @override
+  void onReady() {
+    super.onReady();
+    if (property != null) {
+      propertyName.text = property!.propertyName;
+      propertyPrice.text = property!.propertyPrice;
+      propertyCategory.text = property!.propertyCategory;
+      propertyCity.text = property!.propertyCity;
+      propertyState.text = property!.propertyState!;
+      propertyPincode.text = property!.propertyZip!;
+      propertyDescription.text = property!.propertyDescription!;
+      propertyLatitude.text = property!.latitude!;
+      propertyLongitude.text = property!.longitude!;
+      amenities = property!.amenities!;
+      tags = property!.tags!;
+      if (property != null && property!.amenities != null) {
+        amenities.addAll(property!.amenities!);
+      }
 
-    // Check if the property has existing amenities
-    // if (property!.amenities != null) {
-    //   // Append the existing amenities from the property object to the existing list.
-    //   amenities.addAll(property!.amenities!.map((e) => Amenity.fromJson(e)));
-    // }
+      // Check if the property has existing amenities
+      // if (property!.amenities != null) {
+      //   // Append the existing amenities from the property object to the existing list.
+      //   amenities.addAll(property!.amenities!.map((e) => Amenity.fromJson(e)));
+      // }
+    }
   }
-}
 
   @override
   void onClose() {
     super.onClose();
+    // Clear all text controller values
+    propertyName.clear();
+    propertyPrice.clear();
+    propertyCategory.clear();
+    propertyCity.clear();
+    propertyState.clear();
+    propertyPincode.clear();
+    propertyLatitude.clear();
+    propertyLongitude.clear();
+    propertyDescription.clear();
+    // Clear other lists or variables if needed
+    amenities.clear();
+    tags.clear();
+    removeIndexes.clear();
   }
+
   
 }

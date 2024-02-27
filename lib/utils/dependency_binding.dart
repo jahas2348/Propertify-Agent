@@ -9,7 +9,9 @@ class InitController extends Bindings {
   void dependencies() {
     // Get.put<PropertyViewModel>(PropertyViewModel(),permanent: true);
 
-    Get.put<AgentViewModel>(AgentViewModel(), permanent: true);
+    Get.put<AgentViewModel>(
+      AgentViewModel(),
+    );
     Get.put<PropertyViewModel>(PropertyViewModel(), permanent: true);
     Get.lazyPut(() => NotificationViewModel(), fenix: true);
     // Get.put<PropertyViewModel>(PropertyViewModel(),permanent: true);

@@ -19,6 +19,8 @@ class AppUrl {
   static const String getAllRequestsofAgent = '$baseUrl/api/agent/getAllRequestsofAgent';
   //Send Payment Request to User
   static const String sendPaymentRequesttoUser = '$baseUrl/api/agent/PaymentRequesttoUser';
+  //Get All Properties Info of Agent
+  static const String getAllPropertiesInfoOfAgent = '$baseUrl/api/agent/getAllPropertiesInfoOfAgent';
   
   
 }
