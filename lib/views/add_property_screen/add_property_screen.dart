@@ -1,3 +1,4 @@
+import 'dart:ffi';
 import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -37,66 +38,20 @@ class _AddPropertyScreenState extends State<AddPropertyScreen> {
   int selectedTagIndex = -1;
   int selectedIndex = -1;
   bool showMap = true;
-  void _showTagBottomSheet(String initialTag) {
-    tagController.text = initialTag;
-
-    showModalBottomSheet(
-      isScrollControlled: true,
-      context: context,
-      builder: (context) {
-        return Padding(
-          padding:
-              EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
-          child: Container(
-            padding: EdgeInsets.all(20.0),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                CustomInputField(
-                  fieldIcon: Icons.tag,
-                  controller: tagController,
-                  hintText: 'Please enter tag',
-                ),
-                customSpaces.verticalspace10,
-                Row(
-                  children: [
-                    Expanded(
-                      child: PrimaryButton(
-                        buttonText: initialTag.isEmpty ? 'Add' : 'Update',
-                        buttonFunction: () {
-                          final updatedTag = tagController.text;
-                          if (updatedTag.isNotEmpty) {
-                            setState(() {
-                              if (initialTag.isEmpty) {
-                                propertyController.tags.add(updatedTag);
-                              } else {
-                                propertyController.tags[selectedTagIndex] =
-                                    updatedTag;
-                              }
-                            });
-                          }
-                          Navigator.of(context).pop();
-                        },
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-        );
-      },
-    );
-  }
 
   @override
   void initState() {
     super.initState();
+    print('in init state');
+    print(widget.property!.value.propertyName);
     propertyController =
-        Get.put(PropertyViewModel(property: widget.property?.value));
+        Get.put(PropertyViewModel(property: widget.property),);
+    print(propertyController.propertyName.value.text);
+    propertyController.onReady();
+
+    print(propertyController.propertyName.text);
   }
 
-  @override
   Widget build(BuildContext context) {
     return PopScope(
       onPopInvoked: (didPop) {
@@ -680,6 +635,58 @@ class _AddPropertyScreenState extends State<AddPropertyScreen> {
           ),
         ),
       ),
+    );
+  }
+
+  void _showTagBottomSheet(String initialTag) {
+    tagController.text = initialTag;
+
+    showModalBottomSheet(
+      isScrollControlled: true,
+      context: context,
+      builder: (context) {
+        return Padding(
+          padding:
+              EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
+          child: Container(
+            padding: EdgeInsets.all(20.0),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                CustomInputField(
+                  fieldIcon: Icons.tag,
+                  controller: tagController,
+                  hintText: 'Please enter tag',
+                ),
+                customSpaces.verticalspace10,
+                Row(
+                  children: [
+                    Expanded(
+                      child: PrimaryButton(
+                        buttonText: initialTag.isEmpty ? 'Add' : 'Update',
+                        buttonFunction: () {
+                          final updatedTag = tagController.text;
+                          if (updatedTag.isNotEmpty) {
+                            setState(() {
+                              if (initialTag.isEmpty) {
+                                propertyController.tags.add(updatedTag);
+                              } else {
+                                propertyController.tags[selectedTagIndex] =
+                                    updatedTag;
+                              }
+                            });
+                          }
+                          Navigator.of(context).pop();
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        );
+      },
     );
   }
 

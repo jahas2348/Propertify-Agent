@@ -11,8 +11,9 @@ import 'package:propertify_for_agents/view_models/controllers/agent_view_model.d
 import 'package:propertify_for_agents/views/navigation/navigation.dart';
 
 class PropertyViewModel extends GetxController {
-  PropertyModel? property;
-
+  
+  Rx<PropertyModel>? property;
+  
   final agentViewModel = Get.find<AgentViewModel>();
 
   PropertyViewModel({this.property});
@@ -165,6 +166,7 @@ class PropertyViewModel extends GetxController {
   }
 
   UpdatePropertyData(Rx<PropertyModel> Property) async {
+    print(property!.value.id);
     submitButtonPressed.value = true;
 
     final propertyFormKeyIsValid =
@@ -177,7 +179,7 @@ class PropertyViewModel extends GetxController {
       PropertyModel newproperty = PropertyModel(
         id: Property.value.id,
         agent: agentId,
-        propertyName: propertyName.value.text,
+        propertyName: propertyCity.value.text,
         propertyPrice: propertyPrice.value.text,
         propertyCategory: selectedCategory.value,
         propertyCity: propertyCity.value.text,
@@ -199,12 +201,12 @@ class PropertyViewModel extends GetxController {
         print(response.body);
 
         if (response.statusCode == 200) {
-          property = newproperty;
-          print(response.body);
-          await Get.find<AgentViewModel>().getAgentProperties();
+          // property = newproperty;
+          // print(response.body);
+          // await Get.find<AgentViewModel>().getAgentProperties();
 
-          Get.find<AgentViewModel>().update();
-          Get.to(NavigationItems());
+          // Get.find<AgentViewModel>().update();
+          // Get.to(NavigationItems());
         } else {
           print('Error occurred while adding the property');
         }
@@ -238,22 +240,24 @@ class PropertyViewModel extends GetxController {
 
   @override
   void onReady() {
+    print('in onready');
+    print(property);
     super.onReady();
     if (property != null) {
-      propertyName.text = property!.propertyName;
-      propertyPrice.text = property!.propertyPrice;
-      propertyCategory.text = property!.propertyCategory;
-      propertyCity.text = property!.propertyCity;
-      propertyState.text = property!.propertyState!;
-      propertyPincode.text = property!.propertyZip!;
-      propertyDescription.text = property!.propertyDescription!;
-      propertyLatitude.text = property!.latitude!;
-      propertyLongitude.text = property!.longitude!;
-      amenities = property!.amenities!;
-      tags = property!.tags!;
-      if (property != null && property!.amenities != null) {
-        amenities.addAll(property!.amenities!);
-      }
+      propertyName.text = property!.value.propertyName;
+      // propertyPrice.text = property!.propertyPrice;
+      // propertyCategory.text = property!.propertyCategory;
+      // propertyCity.text = property!.propertyCity;
+      // propertyState.text = property!.propertyState!;
+      // propertyPincode.text = property!.propertyZip!;
+      // propertyDescription.text = property!.propertyDescription!;
+      // propertyLatitude.text = property!.latitude!;
+      // propertyLongitude.text = property!.longitude!;
+      // amenities = property!.amenities!;
+      // tags = property!.tags!;
+      // if (property != null && property!.amenities != null) {
+      //   amenities.addAll(property!.amenities!);
+      // }
 
       // Check if the property has existing amenities
       // if (property!.amenities != null) {

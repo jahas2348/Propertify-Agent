@@ -23,21 +23,22 @@ class propertify_for_agents extends StatelessWidget {
   Widget build(BuildContext context) {
     Brightness systemBrightness = MediaQuery.of(context).platformBrightness;
 
-    // SystemChrome.setSystemUIOverlayStyle(
-    //   SystemUiOverlayStyle(
-    //     statusBarColor:
-    //         systemBrightness == Brightness.light ? Colors.white : Colors.black,
-    //     statusBarIconBrightness: systemBrightness == Brightness.light
-    //         ? Brightness.dark
-    //         : Brightness.light,
-    //     statusBarBrightness: systemBrightness,
-    //     systemNavigationBarColor:
-    //         systemBrightness == Brightness.light ? Colors.white : Colors.black,
-    //     systemNavigationBarIconBrightness: systemBrightness == Brightness.light
-    //         ? Brightness.dark
-    //         : Brightness.light,
-    //   ),
-    // );
+    SystemChrome.setSystemUIOverlayStyle(
+      SystemUiOverlayStyle(
+        statusBarColor: systemBrightness == Brightness.light
+            ? Colors.transparent
+            : Colors.black,
+        statusBarIconBrightness: systemBrightness == Brightness.light
+            ? Brightness.dark
+            : Brightness.light,
+        statusBarBrightness: systemBrightness,
+        systemNavigationBarColor:
+            systemBrightness == Brightness.light ? Colors.white : Colors.black,
+        systemNavigationBarIconBrightness: systemBrightness == Brightness.light
+            ? Brightness.dark
+            : Brightness.light,
+      ),
+    );
     return GetMaterialApp(
       initialBinding: InitController(),
       getPages: AppRoutes.appRoutes(),

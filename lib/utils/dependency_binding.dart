@@ -14,6 +14,5 @@ class InitController extends Bindings {
     );
     Get.put<PropertyViewModel>(PropertyViewModel(), permanent: true);
     Get.lazyPut(() => NotificationViewModel(), fenix: true);
-    // Get.put<PropertyViewModel>(PropertyViewModel(),permanent: true);
   }
 }
