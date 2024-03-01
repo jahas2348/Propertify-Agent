@@ -12,7 +12,7 @@ class InitController extends Bindings {
     Get.put<AgentViewModel>(
       AgentViewModel(),
     );
-    Get.put<PropertyViewModel>(PropertyViewModel(), permanent: true);
+    // Get.put<PropertyViewModel>(PropertyViewModel(), permanent: true);
     Get.lazyPut(() => NotificationViewModel(), fenix: true);
   }
 }

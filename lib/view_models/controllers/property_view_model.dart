@@ -11,9 +11,8 @@ import 'package:propertify_for_agents/view_models/controllers/agent_view_model.d
 import 'package:propertify_for_agents/views/navigation/navigation.dart';
 
 class PropertyViewModel extends GetxController {
-  
   Rx<PropertyModel>? property;
-  
+
   final agentViewModel = Get.find<AgentViewModel>();
 
   PropertyViewModel({this.property});
@@ -47,11 +46,13 @@ class PropertyViewModel extends GetxController {
   final propertyState = TextEditingController();
   final propertyPincode = TextEditingController();
   File? propertyCoverPicture;
+  File? updatedCoverPicture;
   List<XFile>? propertyGalleryPictures;
+  List<XFile>? newGalleryPictures;
   final propertyDescription = TextEditingController();
-  List<String> amenities = [];
+  RxList<String> amenities = <String>[].obs;
   List<String> tags = [];
-  List<int> removeIndexes = [];
+  List<String> removedImageUrls = [];
   final GlobalKey<FormState> propertyformkey = GlobalKey<FormState>();
 
   String? validatePropertyData(String? value, String fieldName) {
@@ -135,7 +136,7 @@ class PropertyViewModel extends GetxController {
     // print(property.propertyZip);
     // print(property.propertyDescription);
     // print(property.propertyCoverPicture);
-    print(property.propertyGalleryPictures);
+    print(property.propertyCoverPicture);
     // print(property.amenities);
     // print(property.tags);
 
@@ -166,49 +167,52 @@ class PropertyViewModel extends GetxController {
   }
 
   UpdatePropertyData(Rx<PropertyModel> Property) async {
-    print(property!.value.id);
+    print(Property.value.id);
     submitButtonPressed.value = true;
 
     final propertyFormKeyIsValid =
         propertyformkey.currentState?.validate() ?? false;
     final isCategorySelected =
-        // ignore: unnecessary_null_comparison
         selectedCategory != null && selectedCategory.value.isNotEmpty;
 
     if (propertyFormKeyIsValid && isCategorySelected) {
-      PropertyModel newproperty = PropertyModel(
+      PropertyModel editedproperty = PropertyModel(
         id: Property.value.id,
         agent: agentId,
-        propertyName: propertyCity.value.text,
-        propertyPrice: propertyPrice.value.text,
+        propertyName: propertyName.value.text,
         propertyCategory: selectedCategory.value,
+        latitude: propertyLatitude.value.text,
+        longitude: propertyLongitude.value.text,
+        propertyRooms: propertyRooms.value.text,
+        propertyBathrooms: propertyBathrooms.value.text,
+        propertySqft: propertySqft.value.text,
+        propertyPrice: propertyPrice.value.text,
         propertyCity: propertyCity.value.text,
         propertyState: propertyState.value.text,
         propertyZip: propertyPincode.value.text,
-        propertyCoverPicture: propertyCoverPicture,
-        propertyGalleryPictures: propertyGalleryPictures,
+        updatedCoverPicture:
+            updatedCoverPicture, // Handle this according to your logic
+        removedImageUrls: removedImageUrls,
         propertyDescription: propertyDescription.value.text,
-        latitude: propertyLatitude.value.text,
-        longitude: propertyLongitude.value.text,
-        // ignore: invalid_use_of_protected_member
-        // amenities: amenities.value.map((e) => Amenity.toJson(e)).toList(),
-        amenities: [],
+        amenities: amenities,
+        tags: tags,
+        newGalleryPictures: newGalleryPictures, // Initialize with an empty list
       );
+      print(editedproperty.updatedCoverPicture);
 
       try {
-        final response = await ApiServices.instance
-            .updatePropertyData(newproperty, removeIndexes);
+        final response =
+            await ApiServices.instance.updatePropertyData(editedproperty);
         print(response.body);
 
         if (response.statusCode == 200) {
-          // property = newproperty;
-          // print(response.body);
-          // await Get.find<AgentViewModel>().getAgentProperties();
-
-          // Get.find<AgentViewModel>().update();
-          // Get.to(NavigationItems());
+          Property.value = editedproperty;
+          print(response.body);
+          await Get.find<AgentViewModel>().getAgentProperties();
+          Get.find<AgentViewModel>().update();
+          Get.back();
         } else {
-          print('Error occurred while adding the property');
+          print('Error occurred while updating the property');
         }
       } catch (e) {
         print('Error: $e');
@@ -241,22 +245,36 @@ class PropertyViewModel extends GetxController {
   @override
   void onReady() {
     print('in onready');
-    print(property);
+
     super.onReady();
     if (property != null) {
       propertyName.text = property!.value.propertyName;
-      // propertyPrice.text = property!.propertyPrice;
-      // propertyCategory.text = property!.propertyCategory;
-      // propertyCity.text = property!.propertyCity;
-      // propertyState.text = property!.propertyState!;
-      // propertyPincode.text = property!.propertyZip!;
-      // propertyDescription.text = property!.propertyDescription!;
-      // propertyLatitude.text = property!.latitude!;
-      // propertyLongitude.text = property!.longitude!;
-      // amenities = property!.amenities!;
-      // tags = property!.tags!;
-      // if (property != null && property!.amenities != null) {
-      //   amenities.addAll(property!.amenities!);
+      propertyRooms.text = property!.value.propertyRooms ?? '0';
+      propertyBathrooms.text = property!.value.propertyBathrooms ?? '0';
+      propertySqft.text = property!.value.propertySqft ?? '0';
+
+      propertyPrice.text = property!.value.propertyPrice;
+
+      propertyCity.text = property!.value.propertyCity;
+      propertyState.text = property!.value.propertyState!;
+      propertyPincode.text = property!.value.propertyZip!;
+      propertyDescription.text = property!.value.propertyDescription!;
+      propertyLatitude.text = property!.value.latitude!;
+      propertyLongitude.text = property!.value.longitude!;
+      if (property!.value.amenities != null) {
+        // Clear the existing list and add amenities from property
+        amenities.clear();
+        amenities.addAll(property!.value.amenities!);
+      }
+      if (property!.value.tags != null) {
+        tags.clear();
+        tags.addAll(property!.value.tags!);
+      }
+
+      // amenities = property!.value.amenities!;
+      // tags = property!.value.tags!;
+      // if (property != null && property!.value.amenities != null) {
+      //   amenities.addAll(property!.value.amenities!);
       // }
 
       // Check if the property has existing amenities
@@ -264,6 +282,18 @@ class PropertyViewModel extends GetxController {
       //   // Append the existing amenities from the property object to the existing list.
       //   amenities.addAll(property!.amenities!.map((e) => Amenity.fromJson(e)));
       // }
+    }
+  }
+
+  @override
+  void onInit() {
+    // TODO: implement onInit
+
+    super.onInit();
+    if (property != null) {
+      selectedCategory.value = property!.value.propertyCategory;
+    } else {
+      selectedCategory.value = '';
     }
   }
 
@@ -283,6 +313,6 @@ class PropertyViewModel extends GetxController {
     // Clear other lists or variables if needed
     amenities.clear();
     tags.clear();
-    removeIndexes.clear();
+    removedImageUrls.clear();
   }
 }

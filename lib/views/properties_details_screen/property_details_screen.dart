@@ -27,6 +27,12 @@ class PropertyDetailsScreen extends StatefulWidget {
 }
 
 class _PropertyDetailsScreenState extends State<PropertyDetailsScreen> {
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    
+  }
   final agent = Get.find<AgentViewModel>().agent;
   bool showMap = true;
   @override

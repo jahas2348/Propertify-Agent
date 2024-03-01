@@ -51,7 +51,7 @@ class _SingleImagePickerWidgetState extends State<SingleImagePickerWidget> {
                   child: Row(
                     children: [
                       Icon(Icons.photo_library),
-                       customSpaces.horizontalspace10,
+                      customSpaces.horizontalspace10,
                       Text('Gallery'),
                     ],
                   ),
@@ -71,7 +71,7 @@ class _SingleImagePickerWidgetState extends State<SingleImagePickerWidget> {
                 ),
               ],
             ),
-             customSpaces.verticalspace20,
+            customSpaces.verticalspace20,
           ],
         );
       },
@@ -82,7 +82,7 @@ class _SingleImagePickerWidgetState extends State<SingleImagePickerWidget> {
     try {
       final picker = ImagePicker();
       final result = await picker.pickImage(source: source);
-
+      print('********************');
       print("Selected Image: $result");
 
       if (result != null) {
@@ -90,6 +90,8 @@ class _SingleImagePickerWidgetState extends State<SingleImagePickerWidget> {
         if (croppedImagePath != null) {
           setState(() {
             selectedImage = File(croppedImagePath);
+            print('222222222222222');
+            print(selectedImage);
             imageUrl = null;
           });
 
@@ -149,11 +151,14 @@ class _SingleImagePickerWidgetState extends State<SingleImagePickerWidget> {
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: imageUrl != null
-                    ? Image.network(
-                        imageUrl!, // Display the image using NetworkImage
-                        width: double.infinity,
-                        height: double.infinity,
-                        fit: BoxFit.cover,
+                    ? ClipRRect(
+                        borderRadius: BorderRadius.circular(8),
+                        child: Image.network(
+                          imageUrl!, // Display the image using NetworkImage
+                          width: double.infinity,
+                          height: double.infinity,
+                          fit: BoxFit.cover,
+                        ),
                       )
                     : selectedImage != null
                         ? ClipRRect(

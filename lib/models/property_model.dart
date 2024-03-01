@@ -22,10 +22,11 @@ class PropertyModel {
   bool? isApproved;
   bool? isSold;
   List<String>? tags; // Added tags field
+  File? updatedCoverPicture;
 
   // Add this field for newly added gallery pictures
-  List<XFile>? newlyAddedGalleryPictures;
-
+  List<XFile>? newGalleryPictures;
+  List<String>? removedImageUrls;
   PropertyModel({
     this.id,
     required this.agent,
@@ -47,7 +48,9 @@ class PropertyModel {
     this.isApproved,
     this.isSold,
     this.tags,
-    this.newlyAddedGalleryPictures,
+    this.newGalleryPictures,
+    this.removedImageUrls,
+    this.updatedCoverPicture,
   });
 
   factory PropertyModel.fromJson(Map<String, dynamic> json) {
@@ -63,10 +66,12 @@ class PropertyModel {
       propertyCity: json['propertyCity'],
       propertyState: json['propertyState'],
       propertyZip: json['propertyZip'],
-      propertyCoverPicture: File(json['propertyCoverPicture']), // Convert path to File
-      propertyGalleryPictures: (json['propertyGalleryPictures'] as List<dynamic>)
-          .map((path) => XFile(path))
-          .toList(), // Convert paths to File objects
+      propertyCoverPicture:
+          File(json['propertyCoverPicture']), // Convert path to File
+      propertyGalleryPictures:
+          (json['propertyGalleryPictures'] as List<dynamic>)
+              .map((path) => XFile(path))
+              .toList(), // Convert paths to File objects
       propertyDescription: json['propertyDescription'],
       longitude: json['longitude'],
       latitude: json['latitude'],
@@ -74,6 +79,11 @@ class PropertyModel {
       isApproved: json['isApproved'],
       isSold: json['isSold'],
       tags: List<String>.from(json['tags']), // Added tags field
+      // removedImageUrls: List<String>.from(json['removedImageUrls']),
+      // newGalleryPictures: (json['newGalleryPictures'] as List<dynamic>)
+      //     .map((path) => XFile(path))
+      //     .toList(),
+      // updatedCoverPicture: File(json['updatedCoverPicture']),
     );
   }
 
@@ -96,6 +106,8 @@ class PropertyModel {
       'isApproved': isApproved,
       'isSold': isSold,
       'tags': tags, // Added tags field
+      'removedImageUrls': removedImageUrls,
+      'updatedCoverPicture': updatedCoverPicture,
     };
 
     if (id != null) {
@@ -106,13 +118,19 @@ class PropertyModel {
       // Store the path or relevant data about the File as needed
       data['propertyCoverPicture'] = propertyCoverPicture!.path;
     }
+    if (updatedCoverPicture != null) {
+      // Store the path or relevant data about the File as needed
+      data['updatedCoverPicture'] = updatedCoverPicture!.path;
+    }
 
     if (propertyGalleryPictures != null) {
       data['propertyGalleryPictures'] =
           propertyGalleryPictures!.map((file) => file.path).toList();
     }
-
-    // You can update the propertyCoverPicture and propertyGalleryPictures fields as needed based on your server response.
+    if (newGalleryPictures != null) {
+      data['newGalleryPictures'] =
+          newGalleryPictures!.map((file) => file.path).toList();
+    }
 
     return data;
   }

@@ -76,22 +76,20 @@ class ApiServices {
 
     // Upload property cover picture
     final propertyCoverPicture = property.propertyCoverPicture;
-    if (propertyCoverPicture != null) {
-      final imageStream = http.ByteStream(propertyCoverPicture.openRead());
-      final imageLength = await propertyCoverPicture.length();
+if (propertyCoverPicture != null) {
+  final imageStream = http.ByteStream(propertyCoverPicture.openRead());
+  final imageLength = await propertyCoverPicture.length();
 
-      final multipartFile = http.MultipartFile(
-        'propertyCoverPicture',
-        imageStream,
-        imageLength,
-        filename: 'cover_picture.jpg', // Change the filename as needed
-        contentType:
-            MediaType('image', 'jpeg'), // Adjust content type if necessary
-      );
+  final multipartFile = http.MultipartFile(
+    'propertyCoverPicture',
+    imageStream,
+    imageLength,
+    filename: 'cover_picture.jpg', // Change the filename as needed
+    contentType: MediaType('image', 'jpeg'), // Adjust content type if necessary
+  );
 
-      request.files.add(multipartFile);
-    }
-
+  request.files.add(multipartFile);
+}
     // Upload property gallery pictures
     final propertyGalleryPictures = property.propertyGalleryPictures;
     if (propertyGalleryPictures != null && propertyGalleryPictures.isNotEmpty) {
@@ -118,30 +116,26 @@ class ApiServices {
     return http.Response(responseString, response.statusCode);
   }
 
-  //Update Property Data
-  Future<http.Response> updatePropertyData(
-      PropertyModel property, List<int> removeIndexes) async {
+  Future<http.Response> updatePropertyData(PropertyModel property) async {
     final id = property.id;
-    final url = Uri.parse('${AppUrl.baseUrl}${AppUrl.updatePropertyData}/$id');
+    final url = Uri.parse('${AppUrl.updatePropertyData}/$id');
     final request = http.MultipartRequest('PUT', url);
-
-    // Convert the PropertyModel to JSON
-    final propertyJson = property.toJson();
 
     // Add fields to the request
     request.fields['_id'] = property.id!;
     request.fields['agent'] = property.agent;
     request.fields['propertyName'] = property.propertyName;
-    request.fields['propertyPrice'] = property.propertyPrice;
     request.fields['propertyCategory'] = property.propertyCategory;
+    request.fields['longitude'] = property.longitude ?? "";
+    request.fields['latitude'] = property.latitude ?? "";
+    request.fields['propertyRooms'] = property.propertyRooms ?? "";
+    request.fields['propertyBathrooms'] = property.propertyBathrooms ?? "";
+    request.fields['propertySqft'] = property.propertySqft ?? "";
+    request.fields['propertyPrice'] = property.propertyPrice;
     request.fields['propertyCity'] = property.propertyCity;
     request.fields['propertyState'] = property.propertyState ?? "";
     request.fields['propertyZip'] = property.propertyZip ?? "";
     request.fields['propertyDescription'] = property.propertyDescription ?? "";
-    request.fields['longitude'] = property.longitude ?? "";
-    request.fields['latitude'] = property.latitude ?? "";
-    request.fields['isApproved'] = property.isApproved?.toString() ?? "false";
-    request.fields['isSold'] = property.isSold?.toString() ?? "false";
 
     // Add amenities and tags as fields with unique keys
     if (property.amenities != null) {
@@ -149,28 +143,25 @@ class ApiServices {
         request.fields['amenities[$i]'] = property.amenities![i];
       }
     }
-
     if (property.tags != null) {
       for (var i = 0; i < property.tags!.length; i++) {
         request.fields['tags[$i]'] = property.tags![i];
       }
     }
-
-    // Add removeIndexes as fields
-    if (removeIndexes != null) {
-      for (var index in removeIndexes) {
-        request.fields['removeIndexes[]'] = index.toString();
-      }
+    if (property.removedImageUrls != null) {
+      // Convert removedImageUrls to a comma-separated string
+      final removedImageUrlsString = property.removedImageUrls!.join(',');
+      request.fields['removedImageUrls'] = removedImageUrlsString;
     }
 
     // Upload property cover picture (if available)
-    final propertyCoverPicture = property.propertyCoverPicture;
-    if (propertyCoverPicture != null) {
-      final imageStream = http.ByteStream(propertyCoverPicture.openRead());
-      final imageLength = await propertyCoverPicture.length();
+    if (property.updatedCoverPicture != null) {
+      final imageStream =
+          http.ByteStream(property.updatedCoverPicture!.openRead());
+      final imageLength = await property.updatedCoverPicture!.length();
 
       final multipartFile = http.MultipartFile(
-        'propertyCoverPicture',
+        'updatedCoverPicture',
         imageStream,
         imageLength,
         filename: 'cover_picture.jpg',
@@ -180,44 +171,28 @@ class ApiServices {
       request.files.add(multipartFile);
     }
 
-    // Combine existing propertyGalleryPictures and newly added images
-    final combinedGalleryPictures = <File>[];
-    if (property.propertyGalleryPictures != null) {
-      for (final xFile in property.propertyGalleryPictures!) {
-        combinedGalleryPictures.add(File(xFile.path));
-      }
-    }
-    if (property.newlyAddedGalleryPictures != null) {
-      for (final xFile in property.newlyAddedGalleryPictures!) {
-        combinedGalleryPictures.add(File(xFile.path));
-      }
-    }
-
-    // Upload property gallery pictures (combined list)
-    if (combinedGalleryPictures.isNotEmpty) {
-      for (final galleryPicture in combinedGalleryPictures) {
-        final imageStream = http.ByteStream(galleryPicture.openRead());
-        final imageLength = await galleryPicture.length();
-
-        final multipartFile = http.MultipartFile(
-          'propertyGalleryPictures[]', // Use [] to represent an array
-          imageStream,
-          imageLength,
-          filename: 'gallery_picture.jpg',
+    // Upload property gallery pictures (if available)
+    final newGalleryPictures = property.newGalleryPictures;
+    if (newGalleryPictures != null && newGalleryPictures.isNotEmpty) {
+      for (final galleryPicture in newGalleryPictures) {
+        final imageBytes = await File(galleryPicture.path).readAsBytes();
+        final multipartFile = http.MultipartFile.fromBytes(
+          'newGalleryPictures',
+          imageBytes,
+          filename:
+              galleryPicture.path.split('/').last, // Extract filename from path
           contentType: MediaType('image', 'jpeg'),
         );
-
         request.files.add(multipartFile);
       }
     }
-
     final response = await request.send();
     final responseString = await response.stream.bytesToString();
     return http.Response(responseString, response.statusCode);
   }
 
   Future<Map<String, dynamic>> deleteProperty(String? id) async {
-    final uri = Uri.parse('${AppUrl.baseUrl}${AppUrl.deletePropertyById}/$id');
+    final uri = Uri.parse('${AppUrl.deletePropertyById}/$id');
     final propertyId = jsonEncode({'propertyId': id});
     print(uri);
     print(propertyId);

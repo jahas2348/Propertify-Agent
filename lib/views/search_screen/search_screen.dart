@@ -30,11 +30,13 @@ class _SearchScreenState extends State<SearchScreen> {
   LatLng? currentLocation; // Nullable
   TextEditingController _searchController = TextEditingController();
   Set<Marker> markers = {};
-  final propertyController = Get.find<PropertyViewModel>();
+  // final propertyController = Get.find<PropertyViewModel>();
   GoogleMapController? _controller;
   String? mapStyle;
   String placeName = '';
   String address = '';
+  String latitude = '';
+  String longitude = '';
   String city = '';
   bool isLoading = true;
 
@@ -115,10 +117,12 @@ class _SearchScreenState extends State<SearchScreen> {
     widget.propertyLatitude?.text = tappedPoint.latitude.toString();
     widget.propertyLongitude?.text = tappedPoint.longitude.toString();
     widget.propertyCity?.text = city.toString();
-    propertyController.propertyLatitude.text = tappedPoint.latitude.toString();
-    propertyController.propertyLongitude.text =
-        tappedPoint.longitude.toString();
-    propertyController.propertyCity.text = city.toString();
+    // propertyController.propertyLatitude.text = tappedPoint.latitude.toString();
+    // propertyController.propertyLongitude.text =
+    //     tappedPoint.longitude.toString();
+    // propertyCity.text = city.toString();
+    latitude = tappedPoint.latitude.toString();
+    longitude = tappedPoint.longitude.toString();
   }
 
   void _searchAndMoveToLocation(String query) async {
@@ -308,7 +312,11 @@ class _SearchScreenState extends State<SearchScreen> {
                                 if (widget.isPop) {
                                   Navigator.of(context).pop();
                                 } else {
-                                  Get.to(() => AddPropertyScreen());
+                                  Get.to(() => AddPropertyScreen(
+                                        latitude: latitude,
+                                        longitude: longitude,
+                                        city: city,
+                                      ));
                                 }
                               },
                               buttonText: 'Confirm',

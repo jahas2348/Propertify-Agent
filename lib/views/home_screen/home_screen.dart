@@ -18,7 +18,7 @@ import 'package:propertify_for_agents/resources/constants/spaces%20&%20paddings/
 class HomeScreen extends StatelessWidget {
   HomeScreen({super.key});
   final controller = Get.find<AgentViewModel>();
-  final ProperyController = Get.find<PropertyViewModel>();
+  // final ProperyController = Get.find<PropertyViewModel>();
   final NotificationController = Get.find<NotificationViewModel>();
 
   Future<void> _refresh() async {
@@ -53,8 +53,8 @@ class HomeScreen extends StatelessWidget {
                         boxColor: AppColors.secondaryColor,
                         iconSize: 20,
                         iconFunction: () {
-                          ProperyController.propertyLatitude.clear();
-                          ProperyController.propertyLongitude.clear();
+                          // ProperyController.propertyLatitude.clear();
+                          // ProperyController.propertyLongitude.clear();
                           Get.to(() => AddPropertyScreen());
                         },
                       ),

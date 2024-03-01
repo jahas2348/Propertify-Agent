@@ -1,23 +1,16 @@
-import 'dart:ffi';
 import 'dart:io';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:propertify_for_agents/models/property_model.dart';
-import 'package:propertify_for_agents/resources/app_urls/app_urls.dart';
 import 'package:propertify_for_agents/resources/assets/propertify_icons.dart';
 import 'package:propertify_for_agents/resources/colors/app_colors.dart';
 import 'package:propertify_for_agents/resources/components/buttons/custombuttons.dart';
-import 'package:propertify_for_agents/resources/components/dropdown/dropdowns.dart';
 import 'package:propertify_for_agents/resources/components/iconbox/customIconBox.dart';
 import 'package:propertify_for_agents/resources/components/image_picker/multi_image_picker.dart';
 import 'package:propertify_for_agents/resources/components/image_picker/single_image_picker.dart';
 import 'package:propertify_for_agents/resources/components/input_fileds/custom_Input_Fields.dart';
 import 'package:propertify_for_agents/resources/components/input_fileds/custom_Multi_Line_Input_Field.dart';
 import 'package:propertify_for_agents/resources/fonts/app_fonts/app_fonts.dart';
-import 'package:propertify_for_agents/services/api_services.dart';
-import 'package:propertify_for_agents/view_models/controllers/agent_view_model.dart';
 import 'package:propertify_for_agents/resources/constants/spaces%20&%20paddings/paddings.dart';
 import 'package:propertify_for_agents/resources/constants/spaces%20&%20paddings/spaces.dart';
 import 'package:propertify_for_agents/view_models/controllers/property_view_model.dart';
@@ -25,8 +18,16 @@ import 'package:propertify_for_agents/views/add_property_screen/custom_check_box
 import 'package:propertify_for_agents/views/search_screen/search_screen.dart';
 
 class AddPropertyScreen extends StatefulWidget {
-  AddPropertyScreen({Key? key, this.property});
+  AddPropertyScreen(
+      {Key? key,
+      this.property,
+      this.latitude = '',
+      this.city = '',
+      this.longitude = ''});
   final Rx<PropertyModel>? property;
+  final String latitude;
+  final String longitude;
+  final String city;
   @override
   State<AddPropertyScreen> createState() => _AddPropertyScreenState();
 }
@@ -36,6 +37,7 @@ class _AddPropertyScreenState extends State<AddPropertyScreen> {
 
   TextEditingController tagController = TextEditingController();
   int selectedTagIndex = -1;
+
   int selectedIndex = -1;
   bool showMap = true;
 
@@ -43,13 +45,15 @@ class _AddPropertyScreenState extends State<AddPropertyScreen> {
   void initState() {
     super.initState();
     print('in init state');
-    print(widget.property!.value.propertyName);
-    propertyController =
-        Get.put(PropertyViewModel(property: widget.property),);
-    print(propertyController.propertyName.value.text);
-    propertyController.onReady();
 
-    print(propertyController.propertyName.text);
+    propertyController = Get.put(
+      PropertyViewModel(property: widget.property),
+    );
+    selectedIndex = propertyController.Categories.indexWhere(
+        (element) => element == propertyController.selectedCategory.value);
+    propertyController.propertyLatitude.text = widget.latitude;
+    propertyController.propertyLongitude.text = widget.longitude;
+    propertyController.propertyCity.text = widget.city;
   }
 
   Widget build(BuildContext context) {
@@ -117,473 +121,462 @@ class _AddPropertyScreenState extends State<AddPropertyScreen> {
                         customSpaces.verticalspace20,
                         Padding(
                           padding: customPaddings.horizontalpadding20,
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              CustomInputField(
-                                fieldIcon: PropertifyIcons.home,
-                                hintText: 'Enter Property Name',
-                                controller: propertyController.propertyName,
-                                // validator: (value) {
-                                //   return propertyController
-                                //       .validatePropertyData(
-                                //           value, 'Property Name');
-                                // },
-                              ),
-                              customSpaces.verticalspace20,
-                              // Track the index of the selected item
-
-                              Container(
-                                height: 100,
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(4),
+                          child: GetX<PropertyViewModel>(builder: (_) {
+                            return Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                CustomInputField(
+                                  fieldIcon: PropertifyIcons.home,
+                                  hintText: 'Enter Property Name',
+                                  controller: propertyController.propertyName,
+                                  // validator: (value) {
+                                  //   return propertyController
+                                  //       .validatePropertyData(
+                                  //           value, 'Property Name');
+                                  // },
                                 ),
-                                child: GridView.builder(
-                                  padding: EdgeInsets.all(0),
-                                  gridDelegate:
-                                      SliverGridDelegateWithFixedCrossAxisCount(
-                                    crossAxisCount: 4,
-                                    childAspectRatio: 1 / 1,
-                                    crossAxisSpacing: 10.0, // Adjust as needed
-                                    mainAxisSpacing: 10.0, // Adjust as needed
+                                customSpaces.verticalspace20,
+                                // Track the index of the selected item
+
+                                Container(
+                                  height: 100,
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(4),
                                   ),
-                                  itemCount:
-                                      propertyController?.Categories?.length ??
-                                          0,
-                                  itemBuilder:
-                                      (BuildContext context, int index) {
-                                    final category =
-                                        propertyController?.Categories?[index];
-                                    if (category == null) return SizedBox();
+                                  child: GridView.builder(
+                                    padding: EdgeInsets.all(0),
+                                    gridDelegate:
+                                        SliverGridDelegateWithFixedCrossAxisCount(
+                                      crossAxisCount: 4,
+                                      childAspectRatio: 1 / 1,
+                                      crossAxisSpacing:
+                                          10.0, // Adjust as needed
+                                      mainAxisSpacing: 10.0, // Adjust as needed
+                                    ),
+                                    itemCount: propertyController
+                                            ?.Categories?.length ??
+                                        0,
+                                    itemBuilder:
+                                        (BuildContext context, int index) {
+                                      final category = propertyController
+                                          ?.Categories?[index];
+                                      if (category == null) return SizedBox();
 
-                                    final isSelected = selectedIndex == index;
+                                      final isSelected = selectedIndex == index;
 
-                                    return GestureDetector(
-                                      onTap: () {
-                                        setState(() {
-                                          selectedIndex = index;
-                                        });
-                                        propertyController
-                                            .selectedCategory.value = category;
-                                        print("$category selected");
-                                        // Handle onTap event for the selected category
-                                      },
-                                      child: Container(
-                                        padding: const EdgeInsets.all(8.0),
-                                        decoration: BoxDecoration(
-                                          color: isSelected
-                                              ? AppColors.primaryColor
-                                              : Colors.transparent,
-                                          border: Border.all(
+                                      return GestureDetector(
+                                        onTap: () {
+                                          setState(() {
+                                            selectedIndex = index;
+                                          });
+                                          propertyController.selectedCategory
+                                              .value = category;
+                                          print("$category selected");
+                                          // Handle onTap event for the selected category
+                                        },
+                                        child: Container(
+                                          padding: const EdgeInsets.all(8.0),
+                                          decoration: BoxDecoration(
                                             color: isSelected
                                                 ? AppColors.primaryColor
-                                                : Colors.grey.shade400,
-                                            width: 1.0,
-                                          ),
-                                          borderRadius:
-                                              BorderRadius.circular(4.0),
-                                        ),
-                                        child: Column(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.center,
-                                          children: [
-                                            Icon(
-                                              _getIconForCategory(category),
+                                                : Colors.transparent,
+                                            border: Border.all(
                                               color: isSelected
-                                                  ? Colors.white
-                                                  : Colors.black,
+                                                  ? AppColors.primaryColor
+                                                  : Colors.grey.shade400,
+                                              width: 1.0,
                                             ),
-                                            SizedBox(height: 10),
-                                            Text(
-                                              category,
-                                              style: TextStyle(
+                                            borderRadius:
+                                                BorderRadius.circular(4.0),
+                                          ),
+                                          child: Column(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            children: [
+                                              Icon(
+                                                _getIconForCategory(category),
                                                 color: isSelected
                                                     ? Colors.white
                                                     : Colors.black,
                                               ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    );
-                                  },
-                                ),
-                              ),
-
-                              CustomColorButton(
-                                buttonText: 'Choose Location',
-                                buttonColor: Colors.grey.shade600,
-                                buttonFunction: () {
-                                  Navigator.of(context).push(MaterialPageRoute(
-                                    builder: (context) => SearchScreen(
-                                      propertyLatitude:
-                                          propertyController.propertyLatitude,
-                                      propertyLongitude:
-                                          propertyController.propertyLongitude,
-                                      propertyCity:
-                                          propertyController.propertyCity,
-                                      isPop: true,
-                                    ),
-                                  ));
-                                },
-                              ),
-                              customSpaces.verticalspace20,
-                              CustomInputField(
-                                editable: false,
-                                fieldIcon: Icons.pin_drop,
-
-                                hintText: 'Latitude',
-                                controller: propertyController.propertyLatitude,
-                                keyboardType: TextInputType.number,
-                                // validator: (value) {
-                                //   return propertyController
-                                //       .validatePropertyPrice(value);
-                                // },
-                              ),
-                              customSpaces.verticalspace20,
-                              CustomInputField(
-                                editable: false,
-                                fieldIcon: Icons.pin_drop,
-
-                                hintText: 'Longitude',
-                                controller:
-                                    propertyController.propertyLongitude,
-                                keyboardType: TextInputType.number,
-                                // validator: (value) {
-                                //   return propertyController
-                                //       .validatePropertyPrice(value);
-                                // },
-                              ),
-                              customSpaces.verticalspace20,
-
-                              Row(
-                                children: [
-                                  Expanded(
-                                    child: CustomInputField(
-                                      fieldIcon: PropertifyIcons.bed,
-                                      hintText: 'Enter Rooms',
-                                      controller:
-                                          propertyController.propertyRooms,
-                                      keyboardType: TextInputType.number,
-                                      // validator: (value) {
-                                      //   return propertyController
-                                      //       .validatePropertyPrice(value);
-                                      // },
-                                    ),
-                                  ),
-                                  customSpaces
-                                      .horizontalspace10, // Adjust the spacing as needed
-                                  Expanded(
-                                    child: CustomInputField(
-                                      fieldIcon: Icons.shower_outlined,
-                                      hintText: 'Enter Bathrooms',
-                                      controller: propertyController
-                                          .propertyBathrooms, // You should update this controller to a different one for bathrooms
-                                      keyboardType: TextInputType.number,
-                                      // validator: (value) {
-                                      //   return propertyController
-                                      //       .validatePropertyPrice(value);
-                                      // },
-                                    ),
-                                  ),
-                                ],
-                              ),
-
-                              customSpaces.verticalspace20,
-                              CustomInputField(
-                                fieldIcon: PropertifyIcons.sqft,
-                                hintText: 'Enter Sqft',
-                                controller: propertyController.propertySqft,
-                                keyboardType: TextInputType.number,
-                                // validator: (value) {
-                                //   return propertyController
-                                //       .validatePropertyPrice(value);
-                                // },
-                              ),
-
-                              customSpaces.verticalspace20,
-                              CustomInputField(
-                                fieldIcon: Icons.currency_rupee_sharp,
-                                hintText: 'Enter Property Price',
-                                controller: propertyController.propertyPrice,
-                                keyboardType: TextInputType.number,
-                                // validator: (value) {
-                                //   return propertyController
-                                //       .validatePropertyPrice(value);
-                                // },
-                              ),
-
-                              customSpaces.verticalspace20,
-                              CustomInputField(
-                                fieldIcon: Icons.location_city,
-                                hintText: 'Enter Property City',
-                                controller: propertyController.propertyCity,
-                                // validator: (value) {
-                                //   return propertyController
-                                //       .validatePropertyData(
-                                //           value, 'Property City');
-                                // },
-                              ),
-                              customSpaces.verticalspace20,
-                              CustomInputField(
-                                fieldIcon: Icons.map_outlined,
-                                hintText: 'Enter Property State',
-                                controller: propertyController.propertyState,
-                                // validator: (value) {
-                                //   return propertyController
-                                //       .validatePropertyData(
-                                //           value, 'Property State');
-                                // },
-                              ),
-                              customSpaces.verticalspace20,
-                              CustomInputField(
-                                fieldIcon: Icons.pin_outlined,
-                                hintText: 'Enter Property Pincode',
-                                controller: propertyController.propertyPincode,
-                                // validator: (value) {
-                                //   return propertyController
-                                //       .validatePropertyPincode(value);
-                                // },
-                                keyboardType: TextInputType.number,
-                              ),
-                              customSpaces.verticalspace20,
-                              Text(
-                                "Property Cover Picture",
-                                style: AppFonts.SecondaryColorText16,
-                              ),
-                              customSpaces.verticalspace20,
-                              SingleImagePickerWidget(
-                                onImageSelected: (File? image) {
-                                  setState(() {
-                                    propertyController.propertyCoverPicture =
-                                        image;
-                                  });
-                                },
-                                initialImageUrl: widget.property?.value
-                                            ?.propertyCoverPicture !=
-                                        null
-                                    ? '${widget.property!.value!.propertyCoverPicture!.path}'
-                                    : null,
-                              ),
-                              customSpaces.verticalspace20,
-
-                              // MultiImagePickerWidget(
-                              //   onImagesSelected: (images, removeIndexes) {
-                              //     setState(() {
-                              //       if (widget.property != null) {
-                              //         // Update propertyGalleryPictures when images are selected
-                              //         propertyController
-                              //             .propertyGalleryPictures = images;
-
-                              //         // Handle image deletions here
-                              //         final selectedImageUrls = images!
-                              //             .map((image) => image.path)
-                              //             .toList();
-                              //         final existingImageUrls = widget.property!
-                              //                 .value?.propertyGalleryPictures
-                              //                 ?.map((image) => '${image.path}')
-                              //                 .toList() ??
-                              //             [];
-
-                              //         // Calculate which images were deleted
-                              //         final deletedImageUrls = existingImageUrls
-                              //             .where((imageUrl) =>
-                              //                 !selectedImageUrls
-                              //                     .contains(imageUrl))
-                              //             .map((imageUrl) => imageUrl
-                              //                 .replaceAll(AppUrl.baseUrl, ''))
-                              //             .toList();
-
-                              //         print(
-                              //             'Deleted Image URLs: $deletedImageUrls');
-                              //       }
-                              //     });
-                              //   },
-                              //   initialImageUrls: widget.property?.value
-                              //               ?.propertyGalleryPictures !=
-                              //           null
-                              //       ? widget.property!.value!
-                              //           .propertyGalleryPictures!
-                              //           .map((image) => '${image.path}')
-                              //           .toList()
-                              //       : [],
-                              //   property:
-                              //       widget.property, // Pass the property here
-                              // ),
-                              MultiImagePickerWidget(
-                                onImagesSelected: (images, removeIndexes) {
-                                  propertyController.propertyGalleryPictures =
-                                      images;
-                                },
-                                initialImageUrls: [], // Provide initial image URLs if needed
-                                initialRemoveIndexes: [], // Provide initial remove indexes if needed
-                              ),
-
-                              customSpaces.verticalspace20,
-                              Text(
-                                "Overview",
-                                style: AppFonts.SecondaryColorText16,
-                              ),
-                              customSpaces.verticalspace20,
-                              CustomMultiLineInputField(
-                                hintText: '',
-                                keyboardType: TextInputType.multiline,
-                                maxLines: 8,
-                                controller:
-                                    propertyController.propertyDescription,
-                                // validator: (value) {
-                                //   return propertyController
-                                //       .validatePropertyData(
-                                //           value, 'Property Overview');
-                                // },
-                              ),
-                              customSpaces.verticalspace20,
-                              Text(
-                                "Features & Amenities",
-                                style: AppFonts.SecondaryColorText16,
-                              ),
-                              customSpaces.verticalspace10,
-                              // Assuming you have a list of selected amenity names or IDs
-
-                              Wrap(
-                                spacing: 10, // Adjust the spacing as needed
-                                children: amenitiesList.map((amenity) {
-                                  final isChecked = propertyController.amenities
-                                      .contains(amenity);
-                                  return GestureDetector(
-                                    onTap: () {
-                                      setState(() {
-                                        if (isChecked) {
-                                          propertyController.amenities
-                                              .remove(amenity);
-                                        } else {
-                                          propertyController.amenities
-                                              .add(amenity);
-                                        }
-                                        print(propertyController.amenities);
-                                      });
-                                    },
-                                    child: Container(
-                                      margin:
-                                          EdgeInsets.symmetric(vertical: 10),
-                                      padding: EdgeInsets.symmetric(
-                                          vertical: 10, horizontal: 10),
-                                      decoration: BoxDecoration(
-                                        // color: isChecked
-                                        //     ? AppColors.secondaryColor
-                                        //     : Colors.transparent,
-                                        border: Border.all(
-                                            color: isChecked
-                                                ? Colors.black
-                                                : Colors.grey),
-                                        borderRadius: BorderRadius.circular(4),
-                                      ),
-                                      child: Row(
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: [
-                                          CustomCheckbox(
-                                            isChecked: isChecked,
-                                            onChanged: (value) {
-                                              setState(() {
-                                                if (value) {
-                                                  propertyController.amenities
-                                                      .add(amenity);
-                                                } else {
-                                                  propertyController.amenities
-                                                      .remove(amenity);
-                                                }
-                                                print(propertyController
-                                                    .amenities);
-                                              });
-                                            },
-                                          ),
-                                          // Add spacing between checkbox and text
-                                          SizedBox(width: 5),
-                                          Text(amenity,
-                                              style: isChecked
-                                                  ? AppFonts
-                                                      .SecondaryColorText14
-                                                  : AppFonts.greyText14),
-                                        ],
-                                      ),
-                                    ),
-                                  );
-                                }).toList(),
-                              ),
-
-                              customSpaces.verticalspace20,
-                              CustomColorButton(
-                                buttonText: 'Add Tags',
-                                buttonColor: AppColors.secondaryColor,
-                                buttonFunction: () {
-                                  selectedTagIndex = -1;
-                                  _showTagBottomSheet('');
-                                },
-                              ),
-
-                              customSpaces.verticalspace10,
-                              Wrap(
-                                spacing: 10,
-                                children: List.generate(
-                                    propertyController.tags.length, (index) {
-                                  final tag = propertyController.tags[index];
-                                  return Row(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      GestureDetector(
-                                        onTap: () {
-                                          selectedTagIndex = index;
-                                          _showTagBottomSheet(tag);
-                                        },
-                                        child: Container(
-                                          padding: EdgeInsets.all(5),
-                                          decoration: BoxDecoration(
-                                            border:
-                                                Border.all(color: Colors.grey),
-                                            borderRadius:
-                                                BorderRadius.circular(4),
-                                          ),
-                                          child: Row(
-                                            mainAxisSize: MainAxisSize.min,
-                                            children: [
-                                              customSpaces.horizontalspace5,
-                                              Icon(Icons.tag),
-                                              SizedBox(width: 5),
-                                              Text(tag),
-                                              SizedBox(width: 5),
-                                              GestureDetector(
-                                                onTap: () {
-                                                  setState(() {
-                                                    propertyController.tags
-                                                        .removeAt(index);
-                                                  });
-                                                },
-                                                child: Container(
-                                                  padding: EdgeInsets.all(5),
-                                                  child: CircleAvatar(
-                                                    backgroundColor:
-                                                        Colors.red.shade100,
-                                                    radius: 15,
-                                                    child: Icon(
-                                                      Icons.close_rounded,
-                                                      color: Colors.red,
-                                                      size: 15,
-                                                    ),
-                                                  ),
+                                              SizedBox(height: 10),
+                                              Text(
+                                                category,
+                                                style: TextStyle(
+                                                  color: isSelected
+                                                      ? Colors.white
+                                                      : Colors.black,
                                                 ),
                                               ),
                                             ],
                                           ),
                                         ),
-                                      ),
-                                    ],
-                                  );
-                                }),
-                              ),
+                                      );
+                                    },
+                                  ),
+                                ),
 
-                              customSpaces.verticalspace20,
-                            ],
-                          ),
+                                CustomColorButton(
+                                  buttonText: 'Choose Location',
+                                  buttonColor: Colors.grey.shade600,
+                                  buttonFunction: () {
+                                    Navigator.of(context)
+                                        .push(MaterialPageRoute(
+                                      builder: (context) => SearchScreen(
+                                        propertyLatitude:
+                                            propertyController.propertyLatitude,
+                                        propertyLongitude: propertyController
+                                            .propertyLongitude,
+                                        propertyCity:
+                                            propertyController.propertyCity,
+                                        isPop: true,
+                                      ),
+                                    ));
+                                  },
+                                ),
+                                customSpaces.verticalspace20,
+                                CustomInputField(
+                                  editable: false,
+                                  fieldIcon: Icons.pin_drop,
+
+                                  hintText: 'Latitude',
+                                  controller:
+                                      propertyController.propertyLatitude,
+                                  keyboardType: TextInputType.number,
+                                  // validator: (value) {
+                                  //   return propertyController
+                                  //       .validatePropertyPrice(value);
+                                  // },
+                                ),
+                                customSpaces.verticalspace20,
+                                CustomInputField(
+                                  editable: false,
+                                  fieldIcon: Icons.pin_drop,
+
+                                  hintText: 'Longitude',
+                                  controller:
+                                      propertyController.propertyLongitude,
+                                  keyboardType: TextInputType.number,
+                                  // validator: (value) {
+                                  //   return propertyController
+                                  //       .validatePropertyPrice(value);
+                                  // },
+                                ),
+                                customSpaces.verticalspace20,
+
+                                Row(
+                                  children: [
+                                    Expanded(
+                                      child: CustomInputField(
+                                        fieldIcon: PropertifyIcons.bed,
+                                        hintText: 'Enter Rooms',
+                                        controller:
+                                            propertyController.propertyRooms,
+                                        keyboardType: TextInputType.number,
+                                        // validator: (value) {
+                                        //   return propertyController
+                                        //       .validatePropertyPrice(value);
+                                        // },
+                                      ),
+                                    ),
+                                    customSpaces
+                                        .horizontalspace10, // Adjust the spacing as needed
+                                    Expanded(
+                                      child: CustomInputField(
+                                        fieldIcon: Icons.shower_outlined,
+                                        hintText: 'Enter Bathrooms',
+                                        controller: propertyController
+                                            .propertyBathrooms, // You should update this controller to a different one for bathrooms
+                                        keyboardType: TextInputType.number,
+                                        // validator: (value) {
+                                        //   return propertyController
+                                        //       .validatePropertyPrice(value);
+                                        // },
+                                      ),
+                                    ),
+                                  ],
+                                ),
+
+                                customSpaces.verticalspace20,
+                                CustomInputField(
+                                  fieldIcon: PropertifyIcons.sqft,
+                                  hintText: 'Enter Sqft',
+                                  controller: propertyController.propertySqft,
+                                  keyboardType: TextInputType.number,
+                                  // validator: (value) {
+                                  //   return propertyController
+                                  //       .validatePropertyPrice(value);
+                                  // },
+                                ),
+
+                                customSpaces.verticalspace20,
+                                CustomInputField(
+                                  fieldIcon: Icons.currency_rupee_sharp,
+                                  hintText: 'Enter Property Price',
+                                  controller: propertyController.propertyPrice,
+                                  keyboardType: TextInputType.number,
+                                  // validator: (value) {
+                                  //   return propertyController
+                                  //       .validatePropertyPrice(value);
+                                  // },
+                                ),
+
+                                customSpaces.verticalspace20,
+                                CustomInputField(
+                                  fieldIcon: Icons.location_city,
+                                  hintText: 'Enter Property City',
+                                  controller: propertyController.propertyCity,
+                                  // validator: (value) {
+                                  //   return propertyController
+                                  //       .validatePropertyData(
+                                  //           value, 'Property City');
+                                  // },
+                                ),
+                                customSpaces.verticalspace20,
+                                CustomInputField(
+                                  fieldIcon: Icons.map_outlined,
+                                  hintText: 'Enter Property State',
+                                  controller: propertyController.propertyState,
+                                  // validator: (value) {
+                                  //   return propertyController
+                                  //       .validatePropertyData(
+                                  //           value, 'Property State');
+                                  // },
+                                ),
+                                customSpaces.verticalspace20,
+                                CustomInputField(
+                                  fieldIcon: Icons.pin_outlined,
+                                  hintText: 'Enter Property Pincode',
+                                  controller:
+                                      propertyController.propertyPincode,
+                                  // validator: (value) {
+                                  //   return propertyController
+                                  //       .validatePropertyPincode(value);
+                                  // },
+                                  keyboardType: TextInputType.number,
+                                ),
+                                customSpaces.verticalspace20,
+                                Text(
+                                  "Property Cover Picture",
+                                  style: AppFonts.SecondaryColorText16,
+                                ),
+                                customSpaces.verticalspace20,
+                                SingleImagePickerWidget(
+                                  onImageSelected: (File? image) {
+                                    if (widget.property?.value == null) {
+                                      setState(() {
+                                        propertyController
+                                            .propertyCoverPicture = image;
+                                      });
+                                    } else {
+                                      setState(() {
+                                        propertyController.updatedCoverPicture =
+                                            image;
+                                      });
+                                    }
+                                  },
+                                  initialImageUrl: widget.property?.value
+                                              ?.propertyCoverPicture !=
+                                          null
+                                      ? '${widget.property!.value!.propertyCoverPicture!.path}'
+                                      : null,
+                                ),
+                                customSpaces.verticalspace20,
+
+                                MultiImagePickerWidget(
+                                  onImagesSelected: (images, removedImageUrls) {
+                                    propertyController.propertyGalleryPictures =
+                                        images;
+                                    propertyController.removedImageUrls =
+                                        removedImageUrls;
+                                  },
+                                  onNewImages: (images) {
+                                    propertyController.newGalleryPictures =
+                                        images;
+                                  },
+                                  initialImageUrls: widget
+                                      .property?.value.propertyGalleryPictures
+                                      ?.map((image) => image.path)
+                                      .toList(), // Provide initial image URLs if needed
+                                  initialRemovedImageUrls: [],
+                                  // Provide initial remove indexes if needed
+                                ),
+
+                                customSpaces.verticalspace20,
+                                Text(
+                                  "Overview",
+                                  style: AppFonts.SecondaryColorText16,
+                                ),
+                                customSpaces.verticalspace20,
+                                CustomMultiLineInputField(
+                                  hintText: '',
+                                  keyboardType: TextInputType.multiline,
+                                  maxLines: 8,
+                                  controller:
+                                      propertyController.propertyDescription,
+                                  // validator: (value) {
+                                  //   return propertyController
+                                  //       .validatePropertyData(
+                                  //           value, 'Property Overview');
+                                  // },
+                                ),
+                                customSpaces.verticalspace20,
+                                Text(
+                                  "Features & Amenities",
+                                  style: AppFonts.SecondaryColorText16,
+                                ),
+                                customSpaces.verticalspace10,
+                                // Assuming you have a list of selected amenity names or IDs
+                                Wrap(
+                                  spacing: 10, // Adjust the spacing as needed
+                                  children: amenitiesList.map((amenity) {
+                                    final isChecked = propertyController
+                                        .amenities
+                                        .contains(amenity);
+                                    return GestureDetector(
+                                      onTap: () {
+                                        setState(() {
+                                          if (isChecked) {
+                                            propertyController.amenities
+                                                .remove(amenity);
+                                          } else {
+                                            propertyController.amenities
+                                                .add(amenity);
+                                          }
+                                          print(propertyController.amenities);
+                                        });
+                                      },
+                                      child: Container(
+                                        margin:
+                                            EdgeInsets.symmetric(vertical: 10),
+                                        padding: EdgeInsets.symmetric(
+                                            vertical: 10, horizontal: 10),
+                                        decoration: BoxDecoration(
+                                          // color: isChecked
+                                          //     ? AppColors.secondaryColor
+                                          //     : Colors.transparent,
+                                          border: Border.all(
+                                              color: isChecked
+                                                  ? Colors.black
+                                                  : Colors.grey),
+                                          borderRadius:
+                                              BorderRadius.circular(4),
+                                        ),
+                                        child: Row(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            CustomCheckbox(
+                                              isChecked: isChecked,
+                                              onChanged: (value) {
+                                                setState(() {
+                                                  if (value) {
+                                                    propertyController.amenities
+                                                        .add(amenity);
+                                                  } else {
+                                                    propertyController.amenities
+                                                        .remove(amenity);
+                                                  }
+                                                  print(propertyController
+                                                      .amenities);
+                                                });
+                                              },
+                                            ),
+                                            // Add spacing between checkbox and text
+                                            SizedBox(width: 5),
+                                            Text(amenity,
+                                                style: isChecked
+                                                    ? AppFonts
+                                                        .SecondaryColorText14
+                                                    : AppFonts.greyText14),
+                                          ],
+                                        ),
+                                      ),
+                                    );
+                                  }).toList(),
+                                ),
+
+                                customSpaces.verticalspace20,
+                                CustomColorButton(
+                                  buttonText: 'Add Tags',
+                                  buttonColor: AppColors.secondaryColor,
+                                  buttonFunction: () {
+                                    selectedTagIndex = -1;
+                                    _showTagBottomSheet('');
+                                  },
+                                ),
+
+                                customSpaces.verticalspace10,
+                                GetBuilder<PropertyViewModel>(
+                                  builder: (model) {
+                                    return Wrap(
+                                      spacing: 10,
+                                      children: List.generate(model.tags.length,
+                                          (index) {
+                                        final tag = model.tags[index];
+                                        return Row(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            GestureDetector(
+                                              onTap: () {
+                                                selectedTagIndex = index;
+                                                _showTagBottomSheet(tag);
+                                              },
+                                              child: Container(
+                                                padding: EdgeInsets.all(5),
+                                                decoration: BoxDecoration(
+                                                  border: Border.all(
+                                                      color: Colors.grey),
+                                                  borderRadius:
+                                                      BorderRadius.circular(4),
+                                                ),
+                                                child: Row(
+                                                  mainAxisSize:
+                                                      MainAxisSize.min,
+                                                  children: [
+                                                    customSpaces
+                                                        .horizontalspace5,
+                                                    Icon(Icons.tag),
+                                                    SizedBox(width: 5),
+                                                    Text(tag),
+                                                    SizedBox(width: 5),
+                                                    GestureDetector(
+                                                      onTap: () {
+                                                        setState(() {
+                                                          model.tags
+                                                              .removeAt(index);
+                                                        });
+                                                      },
+                                                      child: Container(
+                                                        padding:
+                                                            EdgeInsets.all(5),
+                                                        child: CircleAvatar(
+                                                          backgroundColor:
+                                                              Colors
+                                                                  .red.shade100,
+                                                          radius: 15,
+                                                          child: Icon(
+                                                            Icons.close_rounded,
+                                                            color: Colors.red,
+                                                            size: 15,
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        );
+                                      }),
+                                    );
+                                  },
+                                ),
+
+                                customSpaces.verticalspace20,
+                              ],
+                            );
+                          }),
                         ),
                       ],
                     ),
@@ -618,7 +611,7 @@ class _AddPropertyScreenState extends State<AddPropertyScreen> {
                               if (propertyId != null) {
                                 await propertyController.UpdatePropertyData(
                                     widget.property!);
-                                print('Updating success');
+                                // print('Updating success');
                               } else {
                                 print(
                                     'Unable to update property - ID is null.');
