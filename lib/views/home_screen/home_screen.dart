@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:propertify_for_agents/models/property_model.dart';
 import 'package:propertify_for_agents/resources/assets/propertify_icons.dart';
 import 'package:propertify_for_agents/resources/colors/app_colors.dart';
 import 'package:propertify_for_agents/resources/components/card_widgets/propertyCards/home_page_card.dart';
@@ -9,7 +8,6 @@ import 'package:propertify_for_agents/resources/fonts/app_fonts/app_fonts.dart';
 import 'package:propertify_for_agents/utils/utils.dart';
 import 'package:propertify_for_agents/view_models/controllers/agent_view_model.dart';
 import 'package:propertify_for_agents/view_models/controllers/notification_view_model.dart';
-import 'package:propertify_for_agents/view_models/controllers/property_view_model.dart';
 import 'package:propertify_for_agents/views/add_property_screen/add_property_screen.dart';
 import 'package:propertify_for_agents/views/notification_screens/notification_screen.dart';
 import 'package:propertify_for_agents/resources/constants/spaces%20&%20paddings/paddings.dart';

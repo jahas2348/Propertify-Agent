@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:propertify_for_agents/data/shared_preferences/shared_preferences.dart';
 import 'package:propertify_for_agents/models/request_model.dart';
 import 'package:propertify_for_agents/resources/colors/app_colors.dart';
-import 'package:propertify_for_agents/resources/constants/spaces%20&%20paddings/paddings.dart';
 import 'package:propertify_for_agents/resources/constants/spaces%20&%20paddings/spaces.dart';
 import 'package:propertify_for_agents/views/inbox_screen/chat_message_widget.dart';
 import 'package:propertify_for_agents/views/inbox_screen/chat_model.dart';

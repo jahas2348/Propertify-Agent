@@ -1,6 +1,7 @@
 class AppUrl {
   //Base
-  static const String baseUrl = 'http://10.4.2.58:3000';
+  // static const String baseUrl = 'http://10.4.2.58:3000';
+   static const String baseUrl = 'https://propertifyapp.online';
   //Login
   static const String loginApi = '';
   //Agent Existence
@@ -21,6 +22,5 @@ class AppUrl {
   static const String sendPaymentRequesttoUser = '$baseUrl/api/agent/PaymentRequesttoUser';
   //Get All Properties Info of Agent
   static const String getAllPropertiesInfoOfAgent = '$baseUrl/api/agent/getAllPropertiesInfoOfAgent';
-  
   
 }

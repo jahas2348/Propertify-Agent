@@ -31,8 +31,8 @@ class _PropertyDetailsScreenState extends State<PropertyDetailsScreen> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    
   }
+
   final agent = Get.find<AgentViewModel>().agent;
   bool showMap = true;
   @override
@@ -216,17 +216,23 @@ class _PropertyDetailsScreenState extends State<PropertyDetailsScreen> {
                           children: [
                             IconwithText(
                               contentIcon: PropertifyIcons.sqft,
-                              contentText: '1848 sqft',
+                              contentText:
+                                  '${widget.property.value.propertySqft} Sqft' ??
+                                      '',
                             ),
                             customSpaces.horizontalspace20,
                             IconwithText(
                               contentIcon: PropertifyIcons.bed,
-                              contentText: '3 Rooms',
+                              contentText:
+                                  '${widget.property.value.propertyRooms} Rooms' ??
+                                      '',
                             ),
                             customSpaces.horizontalspace20,
                             IconwithText(
                               contentIcon: Icons.shower_outlined,
-                              contentText: '2 Bathrooms',
+                              contentText:
+                                  '${widget.property.value.propertyBathrooms} Bathrooms' ??
+                                      '',
                             ),
                           ],
                         ),

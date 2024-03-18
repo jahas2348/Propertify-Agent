@@ -5,7 +5,6 @@ import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:propertify_for_agents/resources/components/buttons/custombuttons.dart';
 import 'package:propertify_for_agents/resources/constants/spaces%20&%20paddings/spaces.dart';
-import 'package:propertify_for_agents/view_models/controllers/property_view_model.dart';
 import 'package:propertify_for_agents/views/add_property_screen/add_property_screen.dart';
 
 class SearchScreen extends StatefulWidget {
@@ -30,7 +29,6 @@ class _SearchScreenState extends State<SearchScreen> {
   LatLng? currentLocation; // Nullable
   TextEditingController _searchController = TextEditingController();
   Set<Marker> markers = {};
-  // final propertyController = Get.find<PropertyViewModel>();
   GoogleMapController? _controller;
   String? mapStyle;
   String placeName = '';
@@ -65,21 +63,20 @@ class _SearchScreenState extends State<SearchScreen> {
         markers.add(Marker(
           markerId: MarkerId('current_location'),
           position: currentLocation!,
-          icon: BitmapDescriptor.defaultMarkerWithHue(
-              BitmapDescriptor.hueAzure), // Custom marker icon
+          icon:
+              BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueAzure),
         ));
-        isLoading = false; // Set loading state to false
+        isLoading = false;
       });
     } catch (e) {
       print("Error getting location: $e");
-      isLoading = false; // Set loading state to false
+      isLoading = false;
     }
   }
 
   void _handleMapTap(LatLng tappedPoint) async {
     print(
         "Tapped Point Coordinates: ${tappedPoint.latitude}, ${tappedPoint.longitude}");
-
     try {
       List<Placemark> placemarks = await placemarkFromCoordinates(
           tappedPoint.latitude, tappedPoint.longitude);
@@ -107,20 +104,14 @@ class _SearchScreenState extends State<SearchScreen> {
       markers.add(Marker(
         markerId: MarkerId('current_location'),
         position: tappedPoint,
-        infoWindow:
-            InfoWindow(title: 'Choose this Location'), // Custom info window
-        icon: BitmapDescriptor.defaultMarkerWithHue(
-            BitmapDescriptor.hueBlue), // Custom marker icon
+        infoWindow: InfoWindow(title: 'Choose this Location'),
+        icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueBlue),
       ));
     });
 
     widget.propertyLatitude?.text = tappedPoint.latitude.toString();
     widget.propertyLongitude?.text = tappedPoint.longitude.toString();
     widget.propertyCity?.text = city.toString();
-    // propertyController.propertyLatitude.text = tappedPoint.latitude.toString();
-    // propertyController.propertyLongitude.text =
-    //     tappedPoint.longitude.toString();
-    // propertyCity.text = city.toString();
     latitude = tappedPoint.latitude.toString();
     longitude = tappedPoint.longitude.toString();
   }
@@ -143,10 +134,9 @@ class _SearchScreenState extends State<SearchScreen> {
           markers.add(Marker(
             markerId: MarkerId('current_location'),
             position: searchedLocation,
-            infoWindow:
-                InfoWindow(title: 'Custom Marker'), // Custom info window
+            infoWindow: InfoWindow(title: 'Custom Marker'),
             icon: BitmapDescriptor.defaultMarkerWithHue(
-                BitmapDescriptor.hueAzure), // Custom marker icon
+                BitmapDescriptor.hueAzure),
           ));
         });
 
@@ -188,7 +178,7 @@ class _SearchScreenState extends State<SearchScreen> {
                 markers: markers,
                 onTap: _handleMapTap,
               ),
-            if (isLoading) // Show progress indicator while loading
+            if (isLoading)
               Center(
                 child: CircularProgressIndicator(),
               ),

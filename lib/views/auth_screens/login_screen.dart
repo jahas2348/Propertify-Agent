@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 import 'package:propertify_for_agents/resources/assets/image_assets.dart';
 import 'package:propertify_for_agents/resources/colors/app_colors.dart';
@@ -77,11 +78,17 @@ class _LoginScreenState extends State<LoginScreen> {
                   controller: loginController.phoneNumberController.value,
                 ),
                 customSpaces.verticalspace20,
-                PrimaryButton(
-                  buttonText: 'Send OTP',
-                  buttonFunction: () {
-                    loginController.verifyPhoneNumber();
-                  },
+                Row(
+                  children: [
+                    Expanded(
+                      child: PrimaryButton(
+                        buttonText: 'Send OTP',
+                        buttonFunction: () {
+                          loginController.verifyPhoneNumber();
+                        },
+                      ),
+                    ),
+                  ],
                 ),
                 customSpaces.verticalspace20,
                 CustomSpanText(

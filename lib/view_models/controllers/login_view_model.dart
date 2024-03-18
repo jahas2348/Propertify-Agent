@@ -105,8 +105,9 @@ class LoginViewModel extends GetxController {
       final agent = AgentModel.fromJson(agentData['agent']);
 
       await Get.find<AgentViewModel>().setAgent(agent);
-
       await Get.find<AgentViewModel>().getAgentProperties();
+      await Get.find<AgentViewModel>().getAllPropertiesInfoofAgent();
+
 
       Get.offUntil(
         GetPageRoute(page: () => NavigationItems()),

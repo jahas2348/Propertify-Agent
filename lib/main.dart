@@ -2,7 +2,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:propertify_for_agents/data/shared_preferences/shared_preferences.dart';
-import 'package:propertify_for_agents/resources/colors/app_colors.dart';
+import 'package:propertify_for_agents/resources/app_theme/app_theme.dart';
 import 'package:propertify_for_agents/resources/fonts/getx_localization/languages.dart';
 import 'package:propertify_for_agents/resources/routes/routes.dart';
 import 'package:propertify_for_agents/utils/dependency_binding.dart';
@@ -46,18 +46,7 @@ class propertify_for_agents extends StatelessWidget {
       locale: Locale('en', 'US'),
       fallbackLocale: Locale('en', 'US'),
       home: SplashScreen(),
-      theme: ThemeData(
-        useMaterial3: false,
-        progressIndicatorTheme: ProgressIndicatorThemeData(
-            color: AppColors.primaryColor.shade100,
-            circularTrackColor: AppColors.primaryColor),
-        // brightness: Brightness.light, // Use the dark theme
-        fontFamily: 'gilroy', // Set your custom font here
-        primaryColor: AppColors.primaryColor,
-        primaryColorDark: AppColors.primaryColor,
-        primaryColorLight: AppColors.primaryColor,
-        hintColor: AppColors.primaryColor,
-      ),
+      theme: AppTheme(),
       debugShowCheckedModeBanner: false,
     );
   }

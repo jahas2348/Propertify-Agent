@@ -1,13 +1,10 @@
-import 'dart:convert';
 import 'package:propertify_for_agents/views/inbox_screen/chat_model.dart';
 import 'package:propertify_for_agents/views/inbox_screen/chat_single_screen.dart';
-import 'package:propertify_for_agents/views/inbox_screen/inbox_screen.dart';
 import 'package:propertify_for_agents/views/inbox_screen/socket_manager.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:propertify_for_agents/models/payment_request_sending_model.dart';
-import 'package:propertify_for_agents/resources/app_urls/app_urls.dart';
 import 'package:propertify_for_agents/resources/colors/app_colors.dart';
 import 'package:propertify_for_agents/resources/components/buttons/custombuttons.dart';
 import 'package:propertify_for_agents/resources/components/iconbox/customIconBox.dart';

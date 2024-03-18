@@ -210,7 +210,11 @@ class PropertyViewModel extends GetxController {
           print(response.body);
           await Get.find<AgentViewModel>().getAgentProperties();
           Get.find<AgentViewModel>().update();
-          Get.back();
+          await Utils.snackBar(
+            'Success',
+            'Property Updated Successfully',
+          );
+          Get.to(() => NavigationItems());
         } else {
           print('Error occurred while updating the property');
         }
@@ -302,8 +306,12 @@ class PropertyViewModel extends GetxController {
     super.onClose();
     // Clear all text controller values
     propertyName.clear();
+    propertyRooms.clear();
+    propertyBathrooms.clear();
+    propertySqft.clear();
     propertyPrice.clear();
     propertyCategory.clear();
+    selectedCategory.value = '';
     propertyCity.clear();
     propertyState.clear();
     propertyPincode.clear();

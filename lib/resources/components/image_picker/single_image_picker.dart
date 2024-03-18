@@ -25,7 +25,7 @@ class _SingleImagePickerWidgetState extends State<SingleImagePickerWidget> {
   @override
   void initState() {
     super.initState();
-
+    
     // Check if the initialImageUrl is not empty and doesn't contain the base URL
     if (widget.initialImageUrl != null) {
       imageUrl = widget.initialImageUrl;
@@ -40,36 +40,39 @@ class _SingleImagePickerWidgetState extends State<SingleImagePickerWidget> {
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
             customSpaces.verticalspace20,
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                GestureDetector(
-                  onTap: () async {
-                    await _getImage(ImageSource.gallery);
-                    Navigator.of(context).pop();
-                  },
-                  child: Row(
-                    children: [
-                      Icon(Icons.photo_library),
-                      customSpaces.horizontalspace10,
-                      Text('Gallery'),
-                    ],
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  GestureDetector(
+                    onTap: () async {
+                      await _getImage(ImageSource.gallery);
+                      Navigator.of(context).pop();
+                    },
+                    child: Row(
+                      children: [
+                        Icon(Icons.photo_outlined),
+                        customSpaces.horizontalspace10,
+                        Text('Gallery'),
+                      ],
+                    ),
                   ),
-                ),
-                GestureDetector(
-                  onTap: () async {
-                    await _getImage(ImageSource.camera);
-                    Navigator.of(context).pop();
-                  },
-                  child: Row(
-                    children: [
-                      Icon(Icons.camera_alt),
-                      customSpaces.horizontalspace10,
-                      Text('Camera'),
-                    ],
+                  GestureDetector(
+                    onTap: () async {
+                      await _getImage(ImageSource.camera);
+                      Navigator.of(context).pop();
+                    },
+                    child: Row(
+                      children: [
+                        Icon(Icons.photo_camera_outlined),
+                        customSpaces.horizontalspace10,
+                        Text('Camera'),
+                      ],
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
             customSpaces.verticalspace20,
           ],

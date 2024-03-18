@@ -36,8 +36,6 @@ List<String> amenitiesList = [
   "Parking",
   "Furnished",
   "A/C",
-  
-  // Add more amenities to the list
 ];
 
 

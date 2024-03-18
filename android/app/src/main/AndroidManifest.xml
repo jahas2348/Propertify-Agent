@@ -4,7 +4,7 @@
     <uses-permission android:name="android.permission.INTERNET" />
 
     <application
-        android:label="propertify_for_agents"
+        android:label="Propertify for Business"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
        

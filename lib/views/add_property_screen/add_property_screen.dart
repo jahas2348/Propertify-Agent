@@ -44,8 +44,6 @@ class _AddPropertyScreenState extends State<AddPropertyScreen> {
   @override
   void initState() {
     super.initState();
-    print('in init state');
-
     propertyController = Get.put(
       PropertyViewModel(property: widget.property),
     );
@@ -136,8 +134,6 @@ class _AddPropertyScreenState extends State<AddPropertyScreen> {
                                   // },
                                 ),
                                 customSpaces.verticalspace20,
-                                // Track the index of the selected item
-
                                 Container(
                                   height: 100,
                                   decoration: BoxDecoration(
@@ -149,9 +145,8 @@ class _AddPropertyScreenState extends State<AddPropertyScreen> {
                                         SliverGridDelegateWithFixedCrossAxisCount(
                                       crossAxisCount: 4,
                                       childAspectRatio: 1 / 1,
-                                      crossAxisSpacing:
-                                          10.0, // Adjust as needed
-                                      mainAxisSpacing: 10.0, // Adjust as needed
+                                      crossAxisSpacing: 10.0,
+                                      mainAxisSpacing: 10.0,
                                     ),
                                     itemCount: propertyController
                                             ?.Categories?.length ??
@@ -171,8 +166,6 @@ class _AddPropertyScreenState extends State<AddPropertyScreen> {
                                           });
                                           propertyController.selectedCategory
                                               .value = category;
-                                          print("$category selected");
-                                          // Handle onTap event for the selected category
                                         },
                                         child: Container(
                                           padding: const EdgeInsets.all(8.0),
@@ -194,6 +187,7 @@ class _AddPropertyScreenState extends State<AddPropertyScreen> {
                                                 MainAxisAlignment.center,
                                             children: [
                                               Icon(
+                                                size: 18,
                                                 _getIconForCategory(category),
                                                 color: isSelected
                                                     ? Colors.white
@@ -203,6 +197,7 @@ class _AddPropertyScreenState extends State<AddPropertyScreen> {
                                               Text(
                                                 category,
                                                 style: TextStyle(
+                                                  fontSize: 12,
                                                   color: isSelected
                                                       ? Colors.white
                                                       : Colors.black,
@@ -215,7 +210,6 @@ class _AddPropertyScreenState extends State<AddPropertyScreen> {
                                     },
                                   ),
                                 ),
-
                                 CustomColorButton(
                                   buttonText: 'Choose Location',
                                   buttonColor: Colors.grey.shade600,
@@ -238,7 +232,6 @@ class _AddPropertyScreenState extends State<AddPropertyScreen> {
                                 CustomInputField(
                                   editable: false,
                                   fieldIcon: Icons.pin_drop,
-
                                   hintText: 'Latitude',
                                   controller:
                                       propertyController.propertyLatitude,
@@ -252,7 +245,6 @@ class _AddPropertyScreenState extends State<AddPropertyScreen> {
                                 CustomInputField(
                                   editable: false,
                                   fieldIcon: Icons.pin_drop,
-
                                   hintText: 'Longitude',
                                   controller:
                                       propertyController.propertyLongitude,
@@ -263,7 +255,6 @@ class _AddPropertyScreenState extends State<AddPropertyScreen> {
                                   // },
                                 ),
                                 customSpaces.verticalspace20,
-
                                 Row(
                                   children: [
                                     Expanded(
@@ -279,14 +270,13 @@ class _AddPropertyScreenState extends State<AddPropertyScreen> {
                                         // },
                                       ),
                                     ),
-                                    customSpaces
-                                        .horizontalspace10, // Adjust the spacing as needed
+                                    customSpaces.horizontalspace10,
                                     Expanded(
                                       child: CustomInputField(
                                         fieldIcon: Icons.shower_outlined,
                                         hintText: 'Enter Bathrooms',
                                         controller: propertyController
-                                            .propertyBathrooms, // You should update this controller to a different one for bathrooms
+                                            .propertyBathrooms,
                                         keyboardType: TextInputType.number,
                                         // validator: (value) {
                                         //   return propertyController
@@ -296,7 +286,6 @@ class _AddPropertyScreenState extends State<AddPropertyScreen> {
                                     ),
                                   ],
                                 ),
-
                                 customSpaces.verticalspace20,
                                 CustomInputField(
                                   fieldIcon: PropertifyIcons.sqft,
@@ -308,7 +297,6 @@ class _AddPropertyScreenState extends State<AddPropertyScreen> {
                                   //       .validatePropertyPrice(value);
                                   // },
                                 ),
-
                                 customSpaces.verticalspace20,
                                 CustomInputField(
                                   fieldIcon: Icons.currency_rupee_sharp,
@@ -320,7 +308,6 @@ class _AddPropertyScreenState extends State<AddPropertyScreen> {
                                   //       .validatePropertyPrice(value);
                                   // },
                                 ),
-
                                 customSpaces.verticalspace20,
                                 CustomInputField(
                                   fieldIcon: Icons.location_city,
@@ -382,7 +369,6 @@ class _AddPropertyScreenState extends State<AddPropertyScreen> {
                                       : null,
                                 ),
                                 customSpaces.verticalspace20,
-
                                 MultiImagePickerWidget(
                                   onImagesSelected: (images, removedImageUrls) {
                                     propertyController.propertyGalleryPictures =
@@ -397,11 +383,9 @@ class _AddPropertyScreenState extends State<AddPropertyScreen> {
                                   initialImageUrls: widget
                                       .property?.value.propertyGalleryPictures
                                       ?.map((image) => image.path)
-                                      .toList(), // Provide initial image URLs if needed
+                                      .toList(),
                                   initialRemovedImageUrls: [],
-                                  // Provide initial remove indexes if needed
                                 ),
-
                                 customSpaces.verticalspace20,
                                 Text(
                                   "Overview",
@@ -426,9 +410,8 @@ class _AddPropertyScreenState extends State<AddPropertyScreen> {
                                   style: AppFonts.SecondaryColorText16,
                                 ),
                                 customSpaces.verticalspace10,
-                                // Assuming you have a list of selected amenity names or IDs
                                 Wrap(
-                                  spacing: 10, // Adjust the spacing as needed
+                                  spacing: 10,
                                   children: amenitiesList.map((amenity) {
                                     final isChecked = propertyController
                                         .amenities
@@ -452,9 +435,6 @@ class _AddPropertyScreenState extends State<AddPropertyScreen> {
                                         padding: EdgeInsets.symmetric(
                                             vertical: 10, horizontal: 10),
                                         decoration: BoxDecoration(
-                                          // color: isChecked
-                                          //     ? AppColors.secondaryColor
-                                          //     : Colors.transparent,
                                           border: Border.all(
                                               color: isChecked
                                                   ? Colors.black
@@ -481,7 +461,6 @@ class _AddPropertyScreenState extends State<AddPropertyScreen> {
                                                 });
                                               },
                                             ),
-                                            // Add spacing between checkbox and text
                                             SizedBox(width: 5),
                                             Text(amenity,
                                                 style: isChecked
@@ -494,7 +473,6 @@ class _AddPropertyScreenState extends State<AddPropertyScreen> {
                                     );
                                   }).toList(),
                                 ),
-
                                 customSpaces.verticalspace20,
                                 CustomColorButton(
                                   buttonText: 'Add Tags',
@@ -504,7 +482,6 @@ class _AddPropertyScreenState extends State<AddPropertyScreen> {
                                     _showTagBottomSheet('');
                                   },
                                 ),
-
                                 customSpaces.verticalspace10,
                                 GetBuilder<PropertyViewModel>(
                                   builder: (model) {
@@ -572,7 +549,6 @@ class _AddPropertyScreenState extends State<AddPropertyScreen> {
                                     );
                                   },
                                 ),
-
                                 customSpaces.verticalspace20,
                               ],
                             );
@@ -633,7 +609,6 @@ class _AddPropertyScreenState extends State<AddPropertyScreen> {
 
   void _showTagBottomSheet(String initialTag) {
     tagController.text = initialTag;
-
     showModalBottomSheet(
       isScrollControlled: true,
       context: context,
@@ -694,13 +669,12 @@ class _AddPropertyScreenState extends State<AddPropertyScreen> {
       case 'Other':
         return Icons.category_outlined;
       default:
-        return Icons.category_outlined; // Default icon
+        return Icons.category_outlined;
     }
   }
 
   @override
   void dispose() {
-    // TODO: implement dispose
     super.dispose();
     propertyController.onClose();
   }

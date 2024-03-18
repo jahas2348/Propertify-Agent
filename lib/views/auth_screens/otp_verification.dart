@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 import 'package:propertify_for_agents/resources/colors/app_colors.dart';
 import 'package:propertify_for_agents/resources/components/buttons/custombuttons.dart';
@@ -9,7 +10,6 @@ import 'package:propertify_for_agents/view_models/controllers/login_view_model.d
 import 'package:propertify_for_agents/resources/constants/spaces%20&%20paddings/paddings.dart';
 import 'package:propertify_for_agents/resources/constants/spaces%20&%20paddings/spaces.dart';
 import 'package:propertify_for_agents/views/auth_screens/signup_screen.dart';
-
 
 class OtpVerification extends StatefulWidget {
   OtpVerification({super.key});
@@ -62,11 +62,17 @@ class _OtpVerificationState extends State<OtpVerification> {
                   controller: loginController.smsCodeController.value,
                 ),
                 customSpaces.verticalspace20,
-                PrimaryButton(
-                  buttonText: 'Verify',
-                  buttonFunction: () {
-                    loginController.signInWithOTP(verificationId);
-                  },
+                Row(
+                  children: [
+                    Expanded(
+                      child: PrimaryButton(
+                        buttonText: 'Verify',
+                        buttonFunction: () {
+                          loginController.signInWithOTP(verificationId);
+                        },
+                      ),
+                    ),
+                  ],
                 ),
                 customSpaces.verticalspace20,
                 CustomSpanText(
