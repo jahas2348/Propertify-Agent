@@ -94,9 +94,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 CustomSpanText(
                   firstText: 'Trouble Logging In ?',
                   spanText: 'Contact us',
-                  spanFunction: () {
-                    Get.off(() => SignUpScreen());
-                  },
+                  spanFunction: () {},
                 ),
                 customSpaces.verticalspace40,
               ],

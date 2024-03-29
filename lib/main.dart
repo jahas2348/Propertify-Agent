@@ -25,12 +25,11 @@ class propertify_for_agents extends StatelessWidget {
 
     SystemChrome.setSystemUIOverlayStyle(
       SystemUiOverlayStyle(
-        statusBarColor: systemBrightness == Brightness.light
-            ? Colors.transparent
-            : Colors.black,
+        statusBarColor:
+            systemBrightness == Brightness.light ? Colors.white : Colors.white,
         statusBarIconBrightness: systemBrightness == Brightness.light
             ? Brightness.dark
-            : Brightness.light,
+            : Brightness.dark,
         statusBarBrightness: systemBrightness,
         systemNavigationBarColor:
             systemBrightness == Brightness.light ? Colors.white : Colors.black,
