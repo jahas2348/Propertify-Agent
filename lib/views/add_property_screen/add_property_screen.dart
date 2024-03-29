@@ -47,7 +47,7 @@ class _AddPropertyScreenState extends State<AddPropertyScreen> {
     propertyController = Get.put(
       PropertyViewModel(property: widget.property),
     );
-    selectedIndex = propertyController.Categories.indexWhere(
+    selectedIndex = propertyController.categories.indexWhere(
         (element) => element == propertyController.selectedCategory.value);
     propertyController.propertyLatitude.text = widget.latitude;
     propertyController.propertyLongitude.text = widget.longitude;
@@ -112,7 +112,7 @@ class _AddPropertyScreenState extends State<AddPropertyScreen> {
               Expanded(
                 child: SingleChildScrollView(
                   child: Form(
-                    key: propertyController.propertyformkey,
+                    // key: propertyController.propertyformkey,
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -149,12 +149,12 @@ class _AddPropertyScreenState extends State<AddPropertyScreen> {
                                       mainAxisSpacing: 10.0,
                                     ),
                                     itemCount: propertyController
-                                            ?.Categories?.length ??
+                                            ?.categories?.length ??
                                         0,
                                     itemBuilder:
                                         (BuildContext context, int index) {
                                       final category = propertyController
-                                          ?.Categories?[index];
+                                          ?.categories?[index];
                                       if (category == null) return SizedBox();
 
                                       final isSelected = selectedIndex == index;
@@ -585,8 +585,8 @@ class _AddPropertyScreenState extends State<AddPropertyScreen> {
                               final propertyId = widget.property!.value.id;
 
                               if (propertyId != null) {
-                                await propertyController.UpdatePropertyData(
-                                    widget.property!);
+                                await propertyController
+                                    .updatePropertyData(widget.property!);
                                 // print('Updating success');
                               } else {
                                 print(
@@ -676,6 +676,7 @@ class _AddPropertyScreenState extends State<AddPropertyScreen> {
   @override
   void dispose() {
     super.dispose();
+    // propertyController.dispose();
     propertyController.onClose();
   }
 }
