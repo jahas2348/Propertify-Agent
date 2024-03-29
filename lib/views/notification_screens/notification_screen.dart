@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 import 'package:propertify_for_agents/resources/fonts/app_fonts/app_fonts.dart';
 import 'package:propertify_for_agents/view_models/controllers/notification_view_model.dart';
