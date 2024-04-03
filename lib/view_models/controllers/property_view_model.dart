@@ -93,56 +93,57 @@ class PropertyViewModel extends GetxController {
   Future<void> addPropertyData() async {
     submitButtonPressed.value = true;
 
-    if (propertyFormKey.currentState!.validate()) {
-      PropertyModel property = PropertyModel(
-        agent: agentId,
-        propertyName: propertyName.text,
-        propertyRooms: propertyRooms.text,
-        propertyBathrooms: propertyBathrooms.text,
-        propertySqft: propertySqft.text,
-        propertyPrice: propertyPrice.text,
-        propertyCategory: selectedCategory.value,
-        propertyCity: propertyCity.text,
-        propertyState: propertyState.text,
-        propertyZip: propertyPincode.text,
-        propertyCoverPicture: propertyCoverPicture,
-        propertyGalleryPictures: propertyGalleryPictures,
-        propertyDescription: propertyDescription.text,
-        latitude: propertyLatitude.text,
-        longitude: propertyLongitude.text,
-        amenities: amenities,
-        isApproved: false,
-        isSold: false,
-        tags: tags,
-      );
+    // if (propertyFormKey.currentState!.validate()) {
+    PropertyModel property = PropertyModel(
+      agent: agentId,
+      propertyName: propertyName.text,
+      propertyRooms: propertyRooms.text,
+      propertyBathrooms: propertyBathrooms.text,
+      propertySqft: propertySqft.text,
+      propertyPrice: propertyPrice.text,
+      propertyCategory: selectedCategory.value,
+      propertyCity: propertyCity.text,
+      propertyState: propertyState.text,
+      propertyZip: propertyPincode.text,
+      propertyCoverPicture: propertyCoverPicture,
+      propertyGalleryPictures: propertyGalleryPictures,
+      propertyDescription: propertyDescription.text,
+      latitude: propertyLatitude.text,
+      longitude: propertyLongitude.text,
+      amenities: amenities,
+      isApproved: false,
+      isSold: false,
+      tags: tags,
+    );
 
-      try {
-        final response = await ApiServices.instance.addPropertyData(property);
+    try {
+      final response = await ApiServices.instance.addPropertyData(property);
+      print(response.body);
+
+      if (response.statusCode == 200) {
         print(response.body);
-
-        if (response.statusCode == 200) {
-          print(response.body);
-          await Get.find<AgentViewModel>().getAgentProperties();
-          Get.find<AgentViewModel>().update();
-          Get.back();
-          await Utils.snackBar(
-            'Success',
-            'Property Added Successfully',
-          );
-        } else {
-          print('Error occurred while adding the property');
-          await Utils.snackBar(
-            'Error',
-            'Error occurred while adding the property',
-          );
-        }
-      } catch (e) {
-        print('Error: $e');
+        await Get.find<AgentViewModel>().getAgentProperties();
+        await Get.find<AgentViewModel>().getAllPropertiesInfoofAgent();
+        Get.find<AgentViewModel>().update();
+        Get.back();
+        await Utils.snackBar(
+          'Success',
+          'Property Added Successfully',
+        );
+      } else {
+        print('Error occurred while adding the property');
         await Utils.snackBar(
           'Error',
-          'An error occurred: $e',
+          'Error occurred while adding the property',
         );
       }
+    } catch (e) {
+      print('Error: $e');
+      await Utils.snackBar(
+        'Error',
+        'An error occurred: $e',
+      );
+      // }
     }
   }
 
@@ -289,18 +290,18 @@ class PropertyViewModel extends GetxController {
   @override
   void onClose() {
     super.onClose();
-    propertyName.dispose();
-    propertyRooms.dispose();
-    propertyBathrooms.dispose();
-    propertySqft.dispose();
-    propertyLatitude.dispose();
-    propertyLongitude.dispose();
-    propertyPrice.dispose();
-    propertyCity.dispose();
-    propertyState.dispose();
-    propertyPincode.dispose();
-    propertyDescription.dispose();
-    propertyCoverPicture?.delete();
+    propertyName.clear();
+    propertyRooms.clear();
+    propertyBathrooms.clear();
+    propertySqft.clear();
+    propertyLatitude.clear();
+    propertyLongitude.clear();
+    propertyPrice.clear();
+    propertyCity.clear();
+    propertyState.clear();
+    propertyPincode.clear();
+    propertyDescription.clear();
+    // propertyCoverPicture?.delete();
     propertyGalleryPictures?.clear();
     amenities.clear();
     tags.clear();
